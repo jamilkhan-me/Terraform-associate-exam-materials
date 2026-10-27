@@ -1,0 +1,9 @@
+# Lab artifacts — never commit state, plans, or provider caches
+.terraform/
+*.tfstate
+*.tfstate.*
+terraform.tfstate.d/
+*.tfplan
+crash.log
+provisioner.log
+labs/**/state/
