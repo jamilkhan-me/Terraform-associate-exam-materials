@@ -9,7 +9,7 @@ real-cloud work.
 > These labs were authored without a Terraform binary available, so they have **not been
 > executed** in the authoring environment. Expected outputs are based on documented
 > Terraform behaviour; minor wording differences between Terraform versions are normal.
-> If you see a real difference in *behaviour*, tell your instructor — that's a learning moment.
+> If you see a real difference in *behaviour*, note it in PROGRESS.md: that's a learning moment (Terraform versions differ slightly).
 
 | Lab | Topic | Day | Est. time |
 |---|---|---|---|
@@ -25,6 +25,11 @@ real-cloud work.
 | [10](lab-10/README.md) | Backends, partial config, state migration | 5 | 40 min |
 | [11](lab-11/README.md) | CLI workspaces and environment separation | 6 | 35 min |
 | [12](lab-12/README.md) | Troubleshooting broken configurations | 8 | 60 min |
+
+### Optional real-cloud labs
+[`aws-optional/`](aws-optional/README.md) holds eight AWS labs (A1–A8) from the original 15-day notes.
+They're optional: they show real provider behaviour (real IDs, drift, forced replacement) but cost a
+little if you forget to destroy. Each daily lesson links the matching one.
 
 ## Rules
 1. Work inside `lab-NN/starter/` (copy it first if you want to keep the original: `cp -r starter work`).

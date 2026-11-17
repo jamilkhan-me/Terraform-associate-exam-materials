@@ -3,7 +3,7 @@
 **Purpose:** measure your starting point *before* teaching. A low score is expected and useful.
 **Questions:** 30 · **Time:** 35 minutes · **Closed book** · Do **not** open `answer-keys.md`.
 
-**How to answer** — reply in chat in this format:
+**How to answer** — write your answers on paper or in a text file in this format:
 
 ```
 1. B (3)
@@ -286,4 +286,5 @@ Which statement about **Terraform CLI workspaces** using the local backend is TR
 - D. Workspaces provide strong isolation of credentials and access control.
 
 ---
-**Stop.** Submit your answers in chat. Answers are in `answer-keys.md` → *Diagnostic Test*.
+**Stop.** Mark your answers with [answer-keys.md](answer-keys.md#diagnostic-test) → *Diagnostic Test*, then fill in
+[SCORECARD.md](../SCORECARD.md) (score, per-domain, and confidence calibration).

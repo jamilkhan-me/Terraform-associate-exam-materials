@@ -30,6 +30,23 @@ functions from 1.8), no mutable variables. You describe values and how they rela
 - **Expressions** compute values: references, operators, conditionals, `for`, functions.
 - **Dependencies** are inferred from references: if B mentions A, A goes first.
 
+
+### 🧠 Mental models (from the original 15-day notes)
+
+- **A module is a function.** Variables are its parameters, outputs are its return values,
+  locals are its private intermediate values.
+- **Variable precedence = "who spoke last and loudest".** A `default` written weeks ago is a
+  note on a whiteboard; a `-var` typed as you press Enter is someone standing next to you
+  saying "use this instead". The more immediate and explicit the source, the more it wins.
+- **List vs set = deli queue vs guest list.** A deli queue has an order and two people can hold
+  the same number (list). A guest list has no "first" and being listed twice means nothing
+  (set).
+- **Implicit dependencies = a recipe.** "Add the beaten eggs" implies the eggs were beaten
+  first; nobody writes "step 0: beat the eggs". `depends_on` is for the rare hidden
+  prerequisite, like the oven needing to be preheated, that no ingredient mentions.
+- **`terraform console` = a calculator next to your code.** Before trusting a `merge()` or a
+  `for` expression in a resource, type it into the console and look at the result.
+
 ---
 
 ## C. Technical deep dive
@@ -430,6 +447,15 @@ locals {
 - `var.x` used inside its own `validation` — fine. Before 1.9, referencing *another*
   variable there was an error.
 
+**More traps from the original notes**
+- **`depends_on` is not a valid argument in a `variable` block.** Valid ones: `type`,
+  `default`, `description`, `validation`, `sensitive`, `nullable`, `ephemeral`.
+- **Precedence direction gets flipped under pressure:** CLI `-var` is the **highest**,
+  `default` is the **lowest**, and `TF_VAR_` env vars are second-lowest.
+- **You can't write your own functions in HCL.** Everything comes from the built-in library
+  (plus provider-defined functions from 1.8).
+- **`count.index` starts at 0.**
+
 ---
 
 ## J. Active recall
@@ -504,11 +530,44 @@ variable "users" {
 ```
 </details>
 
+> Optional real-cloud practice: [AWS lab A3 — variables and precedence](../labs/aws-optional/README.md#a3--variables-outputs-and-precedence-day-2).
+
 ---
 
-## L. Lesson assessment
-Instructor gives 10 questions in chat: 3 precedence, 3 predict-the-expression, 2 types, 2
-dependency. Pass mark **8/10**.
+## L. Lesson assessment — mastery quiz
+
+Closed book. Write every answer down **before** opening the answers, and give each a confidence (1 = guess, 2 = unsure, 3 = sure). Pass mark: **10/12**. Record the score in [SCORECARD.md](../SCORECARD.md) and log misses in [mistakes/error-log.md](../mistakes/error-log.md).
+
+*These questions are the self-test questions from the original 15-day notes, corrected and regrouped by topic.*
+
+1. When do you actually need an explicit `depends_on` instead of relying on implicit dependencies?
+2. Which command visualizes the dependency graph, and in what format?
+3. Write the reference to the `id` attribute of `aws_instance.web`.
+4. What does `aws_instance.web[*].id` return, and when is it useful?
+5. Rank by precedence, highest first: `terraform.tfvars`, `-var` flag, environment variable, variable default.
+6. Which arguments are valid in a `variable` block, and which commonly assumed one is not?
+7. Does `sensitive = true` on an output encrypt its value in state?
+8. What is the difference between `object` and `tuple`?
+9. Which file names are loaded automatically without `-var-file`?
+10. What does `jsonencode()` do? Give one common use.
+11. Can a `dynamic` block create multiple top-level resources?
+12. Write a conditional that gives `"t3.large"` when `var.is_prod` is true, else `"t3.micro"`.
+
+<details><summary>Answers</summary>
+
+1. Only when a real dependency exists that no attribute reference expresses (e.g. an IAM policy that must exist before a function first runs).
+2. `terraform graph`, which outputs DOT (render it with Graphviz).
+3. `aws_instance.web.id`
+4. A list of `id`s from every instance of a `count` resource; useful to pass "all IDs" as one value. For a `for_each` resource use `values(aws_instance.web)[*].id` or a `for` expression.
+5. `-var` flag → `terraform.tfvars` → `TF_VAR_` environment variable → default.
+6. Valid: `type`, `default`, `description`, `validation`, `sensitive`, `nullable`, `ephemeral` (1.10+). Not valid: `depends_on`.
+7. No. It only redacts the value in CLI output; state still holds plain text.
+8. `object` has named attributes, each with its own type; `tuple` is a fixed-length sequence with a type per position and no names.
+9. `terraform.tfvars`, `terraform.tfvars.json`, and any `*.auto.tfvars` / `*.auto.tfvars.json`.
+10. Converts a Terraform value to a JSON string, e.g. writing an IAM policy as an HCL object.
+11. No. It generates repeated nested blocks inside one resource (e.g. `ingress`). Multiple resources need `count` or `for_each`.
+12. `var.is_prod ? "t3.large" : "t3.micro"`
+</details>
 
 ## M. Summary
 - Block / argument / attribute / expression. Map argument (`=`) vs nested block.

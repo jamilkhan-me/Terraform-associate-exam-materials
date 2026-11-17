@@ -29,6 +29,19 @@ return values**, internals are private.
 A **CLI workspace** is a named, separate *state* for the *same* configuration. Same code,
 different state file — handy for throw-away copies, weak for prod/non-prod isolation.
 
+
+### 🧠 Mental models (from the original 15-day notes)
+
+- **A module is a library you import.** You can't read its private internals; you only get
+  what its author exposed (outputs) and influence it only through its parameters (variables).
+  That's not a limitation, it's what makes it reusable.
+- **Pinning a module version = naming a textbook edition.** "Read the VPC book" breaks
+  everyone's page references when a new edition comes out; `version = "~> 5.0"` means "the
+  5th edition, any printing".
+- **"Workspace" is one word for two things,** like "server" (hardware vs restaurant staff).
+  Let the context, not the word, tell you whether it's a CLI workspace or an HCP Terraform
+  workspace.
+
 ---
 
 ## C. Technical deep dive
@@ -345,6 +358,15 @@ WORKSPACES (one config, many states)          DIRECTORIES (many configs, many st
 - "Workspace" without a qualifier: decide from context whether it means a CLI workspace
   (alternate state) or an HCP Terraform workspace (config + state + variables + permissions).
 
+**More traps from the original notes**
+- **Providers vs variables across the module boundary:** variables are never inherited, but
+  the **default (un-aliased) provider configurations ARE inherited** by child modules.
+  Only *aliased* providers must be passed with `providers = { ... }`. (The original notes
+  said providers are never inherited; that's wrong and a likely exam question.)
+- **`terraform get`** downloads/updates modules only; **`init`** does backend + modules +
+  providers.
+- **Root module** = the directory you run Terraform in, not "a module with no variables".
+
 ---
 
 ## J. Active recall
@@ -389,10 +411,38 @@ CHANGELOG (local copy), or pin back to 4.x. Never apply a mass destroy blindly.
 **K4.** CLI workspaces fit well (same config, same credentials, disposable).
 </details>
 
+> Optional real-cloud practice: [AWS lab A5 — your first module](../labs/aws-optional/README.md#a5--your-first-module-day-6) and the workspace part of [A7](../labs/aws-optional/README.md#a7--import-logging-and-cli-workspaces-days-5-6).
+
 ---
 
-## L. Lesson assessment
-10 questions in chat: 3 sources/versions, 3 scope/outputs, 2 providers in modules, 2 workspaces. Pass **8/10**.
+## L. Lesson assessment — mastery quiz
+
+Closed book. Write every answer down **before** opening the answers, and give each a confidence (1 = guess, 2 = unsure, 3 = sure). Pass mark: **8/9**. Record the score in [SCORECARD.md](../SCORECARD.md) and log misses in [mistakes/error-log.md](../mistakes/error-log.md).
+
+*These questions are the self-test questions from the original 15-day notes, corrected and regrouped by topic.*
+
+1. What exactly is the root module?
+2. List three valid ways to source a module.
+3. Can a child module use a root-module variable that wasn't passed in?
+4. How do you reference output `subnet_ids` from a module named `network`?
+5. Why pin module versions, and what does the `version` argument NOT apply to?
+6. `terraform init` vs `terraform get`?
+7. Do child modules inherit the root's provider configuration?
+8. Which command lists CLI workspaces, and which expression gives the current one inside config?
+9. How do CLI workspaces fundamentally differ from HCP Terraform workspaces?
+
+<details><summary>Answers</summary>
+
+1. The configuration in the working directory where Terraform commands are run.
+2. Any three of: local path (`./...`), public registry, private registry, GitHub, generic Git, Bitbucket, HTTP URL, S3, GCS.
+3. No. It must be passed explicitly as an argument in the `module` block.
+4. `module.network.subnet_ids`
+5. To avoid surprise changes from new releases. `version` works only for registry sources (public or private); local paths have no versions, and Git sources use `?ref=`.
+6. `init` sets up the backend, modules and providers; `get` only downloads/updates modules.
+7. The default (un-aliased) configurations, yes, automatically. Aliased configurations, no: pass them with `providers = { aws = aws.west }` (the child declares `configuration_aliases` if it needs alias names).
+8. `terraform workspace list`; `terraform.workspace`.
+9. A CLI workspace is just another state for the same working directory, with the same config and credentials. An HCP Terraform workspace has its own configuration source, state, variables, permissions and run history.
+</details>
 
 ## M. Summary
 - Every directory of `.tf` is a module; root = where you run Terraform.

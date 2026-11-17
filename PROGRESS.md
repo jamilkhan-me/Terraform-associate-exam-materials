@@ -1,25 +1,24 @@
 # PROGRESS — Single Source of Truth
 
-> The instructor updates this file after every session. If a session is interrupted,
-> resume from **Next recommended action**.
+> Update this file at the end of every study session (5 minutes). When you come back after a
+> break, start from **Next action**. Prefer clicking? [tracker.html](tracker.html) mirrors these
+> checklists in your browser.
 
 ## Current status
 
 | Field | Value |
 |---|---|
-| Course start date | 2026-10-25 |
-| Target exam date | ~2026-11-04 (Day 10 + buffer) — **confirm** |
-| Exam version | **004** — confirmed from booking (2026-10-25) |
-| Terraform CLI (course-generation environment) | Not installed — labs not executed there |
-| Terraform CLI (your machine) | Unknown — run `terraform version` and report |
+| Exam | Terraform Associate **004** |
+| Exam date | _set it here_ |
+| Terraform CLI on my machine | _run `terraform version` and record it_ |
 | Current day | **Day 1** |
-| Current step | Diagnostic test issued, awaiting answers |
+| Current step | Take the diagnostic test |
 
-## Next recommended action
-1. Answer the diagnostic test (`practice-exams/diagnostic-test.md`) — 30 questions, 35 min,
-   closed book, give a confidence (1 = guess, 2 = unsure, 3 = sure) for each.
-2. ~~Confirm the exam code~~ — done: **004**.
-3. Report `terraform version` from your own machine (or say it isn't installed).
+## Next action
+1. Run `terraform version` (install 1.12.x if missing) and record it above.
+2. Take the [diagnostic test](practice-exams/diagnostic-test.md): 30 questions, 35 min, closed book,
+   confidence 1–3 per answer. Mark it with the answer key and fill in [SCORECARD.md](SCORECARD.md).
+3. Start [Day 1](daily-lessons/day-01.md).
 
 ---
 
@@ -27,7 +26,7 @@
 
 | Day | Lesson | Labs | Mastery quiz | Status |
 |---|---|---|---|---|
-| 1 | Fundamentals | L01 | — | 🟡 In progress (diagnostic issued) |
+| 1 | Fundamentals | L01 | — | ⬜ Not started |
 | 2 | HCL, variables, expressions | L02 | — | ⬜ Not started |
 | 3 | CLI & workflow | L01 revisit, L07 | — | ⬜ Not started |
 | 4 | Providers, resources, lifecycle | L03, L04, L05 | — | ⬜ Not started |
@@ -37,6 +36,8 @@
 | 8 | Troubleshooting | L07, L12 | — | ⬜ Not started |
 | 9 | Mock 2 + remediation | targeted | — | ⬜ Not started |
 | 10 | Mock 3 + readiness | — | — | ⬜ Not started |
+| 11 *(ext.)* | Mock 4 + remediation | AWS lab (opt.) | — | ⬜ Not started |
+| 12 *(ext.)* | Mock 5 + wind-down | — | — | ⬜ Not started |
 
 Status key: ⬜ not started · 🟡 in progress · 🔁 needs re-teach · ✅ mastered (assessment passed)
 
@@ -56,6 +57,7 @@ Status key: ⬜ not started · 🟡 in progress · 🔁 needs re-teach · ✅ ma
 | 10 | Backends & state migration | ⬜ | ⬜ | |
 | 11 | Workspaces | ⬜ | ⬜ | |
 | 12 | Troubleshooting broken configs | ⬜ | ⬜ | |
+| A1–A8 | Optional AWS labs ([list](labs/aws-optional/README.md)) | ⬜ | ⬜ | optional |
 
 ## Weak topics (live)
 _Populated after the diagnostic. Full detail in `flashcards/weak-topics.md`._
@@ -79,3 +81,5 @@ _None yet. See `mistakes/error-log.md`._
 | Mock 1 (Day 7) | pending | — |
 | Mock 2 (Day 9) | pending | — |
 | Mock 3 (Day 10) | pending | — |
+| Mock 4 (Day 11, opt.) | pending | — |
+| Mock 5 (Day 12, opt.) | pending | — |

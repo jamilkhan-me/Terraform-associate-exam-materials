@@ -17,10 +17,23 @@ Then: rapid-fire quiz, misconception test, [QUICK_REVISION.md](../QUICK_REVISION
   current proctoring rules).
 - Sleep beats cramming. Final review: QUICK_REVISION.md + weak-topics flashcards only.
 
+**Exam-day checklist (from the original notes)**
+- [ ] Confirmation email and system requirements at hand; run the proctoring system check in advance
+- [ ] Webcam, microphone and internet tested at least an hour before
+- [ ] Government photo ID ready, with the name matching your registration exactly
+- [ ] Desk clear: no second monitor, no phone in reach, no notes in view
+- [ ] Every other application closed (proctoring software checks running processes)
+- [ ] Log in 15 minutes early so check-in friction doesn't eat exam time
+- [ ] Read every question to the **last clause**: "which is NOT", "select TWO", "without
+      changing real infrastructure". Rushing the qualifier is the cheapest way to lose a mark you knew.
+
+**Evening before:** one pass over [QUICK_REVISION.md](../QUICK_REVISION.md), retake only the
+questions you missed in your worst mock, and reason through each one. No new topics.
+
 ---
 
 ## C. Rapid-fire CLI/HCL quiz (40 items, ~10 min)
-Answer aloud or in chat; answers hidden below.
+Answer aloud or on paper; answers hidden below.
 
 1. Command that downloads providers.
 2. Flag to upgrade providers within constraints.

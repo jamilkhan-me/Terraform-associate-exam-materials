@@ -43,7 +43,7 @@ value = terraform_data.hello.output
 ```
 
 ## 5. Tasks
-1. `cd starter` and run `terraform version`. Record the version in PROGRESS.md (or tell your instructor).
+1. `cd starter` and run `terraform version`. Record the version in PROGRESS.md.
 2. Run `terraform fmt -check`. Note the exit code (`echo $?`). Then `terraform fmt -diff`. Then `terraform fmt -check` again.
 3. Run `terraform validate` **before** `init`. What happens?
 4. Run `terraform init`. List the directory (`ls -la`). Which files/dirs appeared? Is there a `.terraform.lock.hcl`? Why/why not?

@@ -1,10 +1,10 @@
 # Daily Checklist
 
-Copy this routine every day. Tick mentally; the instructor records outcomes in PROGRESS.md.
+Follow this routine every day and record the outcomes in PROGRESS.md and SCORECARD.md yourself.
 
 ## Start of session (15–20 min)
 - [ ] Open `PROGRESS.md` — read "Next recommended action"
-- [ ] **Closed-book recall test** from the instructor (previous day + weak topics)
+- [ ] **Closed-book recall test**: re-answer yesterday's section J (Active recall) without looking, plus 10 cards from your weak topics
 - [ ] Re-test any `mistakes/error-log.md` item marked "open"
 - [ ] Review 15 cards from `flashcards/weak-topics.md`
 
@@ -20,7 +20,7 @@ Copy this routine every day. Tick mentally; the instructor records outcomes in P
 - [ ] Write one sentence: "The concept this lab proved is …"
 
 ## Assessment block
-- [ ] Take the mastery quiz in chat without notes
+- [ ] Take the lesson's mastery quiz (section L) without notes, writing answers before opening them
 - [ ] Give a confidence (1/2/3) per answer
 - [ ] Read every explanation, including for questions you got right
 - [ ] Mastery decision recorded: ✅ mastered · 🔁 re-teach · ➕ more practice

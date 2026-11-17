@@ -14,7 +14,7 @@ command — and understand what each does to config, state, and reality.
   account, and creating one S3 bucket + one CloudWatch log group manually. Costs are
   typically negligible (empty bucket, empty log group), but **you must explicitly agree before
   any real-cloud step**, use a sandbox account, and never use your existing project accounts
-  or state. Your instructor will not run any of these steps for you.
+  or state. See also [AWS lab A7](../aws-optional/README.md#a7--import-logging-and-cli-workspaces-days-5-6).
 
 ## 3. Directory structure
 ```

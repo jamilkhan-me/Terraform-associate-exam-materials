@@ -1,76 +1,120 @@
-# Terraform Associate — 10-Day Bootcamp
+# Terraform Associate (004) — Complete Study Course
 
-A self-contained, offline course to prepare for the **HashiCorp Certified: Terraform
-Associate** exam (assumed version **004** — see [EXAM_OBJECTIVES.md](EXAM_OBJECTIVES.md)).
+One self-contained resource for the **HashiCorp Certified: Terraform Associate (004)** exam.
+It combines two earlier resources into a single path, so you don't need to switch between
+them:
 
-Everything you need is in this folder. No external tutorials, docs, or question banks.
+- **This repository's 10-day bootcamp:** structured lessons, 12 offline labs, a diagnostic,
+  three mock exams, flashcards and trackers. This is the backbone.
+- **The original 15-day notes** ([Terraform-learning-resources](https://github.com/jamilkhan-me/Terraform-learning-resources)):
+  explanations, analogies, gotchas, ~95 self-test questions, two practice exams, AWS
+  hands-on labs, a cheat sheet and a progress tracker. All of it is merged in here and
+  corrected (see [What changed in the merge](#what-changed-in-the-merge)).
 
----
-
-## How to use this workspace
-
-```
-1. Open PROGRESS.md            → see where you are and the next action
-2. Open daily-lessons/day-NN.md → study the day's lesson (answers are in collapsed <details>)
-3. Do the day's lab(s) in labs/ → starter files in starter/, solutions in SOLUTION.md
-4. Answer quiz questions in chat → your instructor marks them and updates the trackers
-5. Log mistakes in mistakes/error-log.md (the instructor does this for you)
-6. Before the exam             → QUICK_REVISION.md + flashcards/weak-topics.md
-```
-
-### Answer-hiding rules
-- Lesson active-recall answers are inside collapsed `<details>` blocks. Answer **before** expanding.
-- Exam questions are in `practice-exams/*.md`; **all** answers are in
-  `practice-exams/answer-keys.md`. Do not open the key until you have submitted.
-- Lab solutions live in each lab's `SOLUTION.md`, separate from the task list.
+You can treat the old repository as retired.
 
 ---
 
-## Map of the workspace
+## Start here
 
-| Path | Purpose |
+```
+1. EXAM_OBJECTIVES.md      → the exam format and the 34 objectives (5 min)
+2. STUDY_PLAN.md           → pick 10 days (default, ~4 h/day) or relaxed 15 days (~2 h/day)
+3. practice-exams/diagnostic-test.md → take it BEFORE studying; mark it; fill SCORECARD.md
+4. Each day: daily-lessons/day-NN.md → labs → mastery quiz (section L) → update PROGRESS.md
+5. Mocks 1–3 on Days 7, 9, 10. Mocks 4–5 on optional Days 11–12.
+6. Last 24 hours: QUICK_REVISION.md + flashcards/weak-topics.md. Nothing new.
+```
+
+Track progress in [PROGRESS.md](PROGRESS.md), or open [tracker.html](tracker.html) in a
+browser for clickable checklists and score bars (saved in that browser only).
+
+### How each lesson is laid out
+Every `day-NN.md` follows the same order: **A** objectives · **B** plain-English explanation +
+🧠 mental models · **C** technical deep dive · **D** why it matters · **E** reference ·
+**F** worked example · **G** visual · **H** misconceptions · **I** exam traps ·
+**J** active recall · **K** practice (+ optional AWS lab) · **L** mastery quiz ·
+**M** summary + flashcards · **N** what to do next based on your score.
+
+### Rules that make it work
+- **Answer before you look.** Answers are in collapsed `<details>` blocks; mock answers are
+  only in [practice-exams/answer-keys.md](practice-exams/answer-keys.md).
+- **Give a confidence (1–3) for every answer.** Confident-and-wrong answers are the
+  dangerous misconceptions; fix those first.
+- **Log every miss** in [mistakes/error-log.md](mistakes/error-log.md). A topic you miss twice
+  goes into [flashcards/weak-topics.md](flashcards/weak-topics.md).
+
+---
+
+## Map
+
+| Path | What it is |
 |---|---|
-| [EXAM_OBJECTIVES.md](EXAM_OBJECTIVES.md) | Assumed exam version, objective map, uncertainties |
-| [STUDY_PLAN.md](STUDY_PLAN.md) | The 10-day schedule with time blocks |
-| [PROGRESS.md](PROGRESS.md) | **Single source of truth** for progress, weak areas, next action |
-| [SCORECARD.md](SCORECARD.md) | Every quiz/mock score and per-domain performance |
-| [DAILY_CHECKLIST.md](DAILY_CHECKLIST.md) | The routine to follow each day |
-| [QUICK_REVISION.md](QUICK_REVISION.md) | Final revision sheet (last 24 hours) |
-| [GLOSSARY.md](GLOSSARY.md) | Every term you must be able to define |
-| `daily-lessons/` | Day 1–10 lessons (structure A–N for each topic) |
-| `labs/` | 12 hands-on labs, runnable offline once the Terraform CLI is installed |
-| `practice-exams/` | Diagnostic, three mock exams, answer keys |
-| `flashcards/` | Flashcards for active recall + a live weak-topic list |
-| `mistakes/error-log.md` | Every mistake, the rule behind it, and a re-test question |
-
----
+| [EXAM_OBJECTIVES.md](EXAM_OBJECTIVES.md) | Exam snapshot, the objective map (where each one is taught), uncertainties |
+| [STUDY_PLAN.md](STUDY_PLAN.md) | 10 + 2 day plan with time blocks; relaxed 15-day pacing |
+| [DAILY_CHECKLIST.md](DAILY_CHECKLIST.md) | The routine for every study day |
+| [PROGRESS.md](PROGRESS.md) · [SCORECARD.md](SCORECARD.md) · [tracker.html](tracker.html) | Where you are, and every score by domain |
+| `daily-lessons/` | Days 1–10 |
+| `labs/` | 12 offline labs (`lab-01`–`lab-12`, no cloud account needed) + [8 optional AWS labs](labs/aws-optional/README.md) |
+| `practice-exams/` | Diagnostic (30 Q), Mocks 1–5 (40 / 57 / 57 / 50 / 46 Q), answer keys with explanations |
+| `flashcards/` | Master deck by domain + your live weak-topic deck |
+| [QUICK_REVISION.md](QUICK_REVISION.md) | Final sheet: the 10 most-missed facts, every domain, confused pairs |
+| [GLOSSARY.md](GLOSSARY.md) | Every term you should be able to define |
+| `mistakes/error-log.md` | Your mistakes, the rule behind each, and re-test questions |
 
 ## Lab environment
+- Install Terraform **1.12.x** (matches the exam; 1.5+ works for the offline labs).
+- Offline labs use only the built-in `terraform` provider (`terraform_data`,
+  `terraform_remote_state`) and `local-exec`: no downloads, no account, no cost.
+- AWS labs need a sandbox AWS account and cost almost nothing **if you `terraform destroy`
+  every session**.
+- The labs were written from documented behaviour and haven't been run in an automated
+  environment; small output-wording differences between versions are normal.
 
-**Terraform CLI was not installed in the environment where this course was generated**,
-so labs have not been executed here. They are designed to run on your machine:
-
-- Install Terraform **1.5 or newer** (1.12+ preferred, to match the assumed exam version).
-- Labs use only the **built-in** `terraform` provider (`terraform_data`,
-  `terraform_remote_state`) plus `local-exec` provisioners — **no provider downloads, no
-  cloud account, no cost**.
-- Where a topic genuinely needs a cloud provider (e.g. importing a real S3 bucket), the lab
-  is **conceptual** with realistic mock output, and states that clearly.
-- Labs never touch your existing AWS projects or state files. Run them only inside
-  `labs/lab-NN/starter/`.
-
-Check your version:
-
-```bash
-terraform version
-```
+## Readiness targets
+Not official pass marks, just evidence you're ready: **≥ 85%** on fresh mocks, no domain
+consistently below **80%**, and every error-log item re-tested correctly. Day 10 has an honest
+readiness rubric. Use it before deciding whether to sit the exam or take the extension days.
 
 ---
 
-## Readiness targets (study targets — not official pass marks)
+## What changed in the merge
 
-- ≥ **85%** on fresh, unseen mock exams
-- No exam domain consistently below **80%**
-- Error-log re-test questions answered correctly
+<details><summary>Where the original 15-day notes went</summary>
 
-Meeting these is evidence of readiness, **not** a guarantee of passing.
+| Original | Now |
+|---|---|
+| Day 1–13 explanations and analogies | "🧠 Mental models" in section B of Days 1–7 |
+| Day 1–13 gotchas | "More traps from the original notes" in section I of Days 1–7 |
+| Self-test Q1–Q95 | Mastery quizzes (section L) of Days 1–7, regrouped by topic |
+| AWS hands-on (Days 1–13) | [labs/aws-optional](labs/aws-optional/README.md) A1–A8, linked from each lesson |
+| Day 14 practice exam (50 Q) | [Mock Exam 4](practice-exams/mock-exam-04.md) |
+| Day 15 practice exam (46 Q) | [Mock Exam 5](practice-exams/mock-exam-05.md) |
+| Master cheat sheet | [QUICK_REVISION.md](QUICK_REVISION.md) section 0 and the existing sections |
+| Exam snapshot / blueprint | [EXAM_OBJECTIVES.md](EXAM_OBJECTIVES.md) section 1 |
+| Exam-day checklist | Day 10 lesson + EXAM_OBJECTIVES |
+| `terraform_004_tracker.html` | [tracker.html](tracker.html), rebuilt for this plan |
+</details>
+
+<details><summary>Errors corrected in the original notes (worth knowing: each one is a likely exam question)</summary>
+
+1. **`~>` constraints.** The notes said `~> 1.4` allows only 1.4.x and `~> 2.3` blocks 2.4.0.
+   Wrong: `~> 1.4` = `>= 1.4, < 2.0`; `~> 2.3` = `>= 2.3, < 3.0`. Only the three-part form
+   (`~> 2.3.0`) stops at the patch level. Practice Exam 1 Q3 had the wrong answer key.
+2. **Providers in modules.** The notes said child modules never inherit provider configuration.
+   Default (un-aliased) providers **are** inherited automatically; only aliased ones must be
+   passed with `providers = { ... }`.
+3. **Local backend locking.** The notes said "no locking at all". It locks on its own machine
+   (OS file lock); it just can't protect a team.
+4. **Plan exit code 2** only exists with `-detailed-exitcode`. A plain successful plan exits 0.
+5. **Data sources in plans.** The notes said they always appear as `<=`. Usually they are read
+   during plan and show no action; `<=` appears only when the read is deferred to apply.
+6. **S3 native locking.** The notes said bucket versioning is *required*; it's strongly
+   recommended (for recovery), and Terraform 1.10+ is required.
+7. **Practice exam answer pattern.** In the original Practice Exam 1, the correct answer was B
+   for almost every question. Options are now shuffled (A–D evenly spread), and four filler
+   questions (e.g. "what language is Terraform written in?") were replaced with real exam topics
+   (`moved`, `removed`, saved plans, aliased providers in modules).
+8. Sentinel's **soft-mandatory** level (missing from the notes) was added; `variable` blocks also
+   accept `ephemeral` (1.10+).
+</details>

@@ -263,7 +263,7 @@ resource "terraform_data" "y" {
 4. A `moved` block (then plan shows a move, not destroy/create).
 </details>
 
-## K. Practice — mixed gauntlet (answer in chat)
+## K. Practice — mixed gauntlet (write your answers first)
 1. `terraform apply` → `Error: creating S3 Bucket (jk-logs): BucketAlreadyOwnedByYou`. Config has `aws_s3_bucket.logs`. What happened and what do you do?
 2. After `terraform init -upgrade`, plan shows lots of attribute changes nobody made. Why might that be, and what's the safe response?
 3. Plan says `module.app.aws_lb.this` will be destroyed; the module call was renamed `module "application"`. Fix?
@@ -280,7 +280,10 @@ resource "terraform_data" "y" {
 </details>
 
 ## L. Lesson assessment
-15-question error-diagnosis gauntlet in chat. Pass **12/15**.
+Error-diagnosis gauntlet, 11 items, closed book: the 5 K questions above (answered *before*
+opening the answers) plus the 6 broken configurations in [Lab 12](../labs/lab-12/README.md), each diagnosed
+and fixed without opening `SOLUTION.md`. Pass **9/11**. Log every miss in
+[mistakes/error-log.md](../mistakes/error-log.md).
 
 ## M. Summary
 - Locate the phase; locate the disagreeing world (config/state/reality).

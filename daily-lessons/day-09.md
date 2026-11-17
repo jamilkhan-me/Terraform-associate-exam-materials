@@ -1,7 +1,7 @@
 # Day 9 — Full Mock Exam and Weakness Remediation
 
 **Assessment:** [Mock Exam 2](../practice-exams/mock-exam-02.md) — 57 questions, 60 minutes, closed book.
-**Then:** targeted remediation using the blocks below (the instructor selects your weakest 5).
+**Then:** targeted remediation using the blocks below (pick your weakest 5 from your Mock 2 marking in SCORECARD.md).
 
 > Format note: 57 Q / 60 min approximates the exam format I believe applies (see
 > EXAM_OBJECTIVES.md). It is a simulation, not an official specification.
@@ -130,7 +130,7 @@ Org → project → workspace; VCS/CLI/API; remote/local/agent; plan → cost �
 ## D–N condensed (for this assessment day)
 - **D. Why:** time pressure exposes shaky knowledge that untimed study hides.
 - **H. Misconceptions:** review the misconception tables from Days 1–8 for your weak domains.
-- **K. Practice:** the instructor generates 10 *fresh* questions on your weakest objective after remediation.
+- **K. Practice:** after remediation, answer the questions in [Mock Exam 4](../practice-exams/mock-exam-04.md) tagged with your weakest domains (check the domain column in the answer key), plus the matching flashcard section.
 - **L. Assessment:** after remediation, a 15-question targeted retest; ≥ 13/15 to close each weak topic.
 - **M. Summary:** record all updates in SCORECARD.md and weak-topics.md.
 - **N. Mastery decision:** Mock 2 ≥ 85% and no domain < 80% → Day 10 as planned. 75–84% → extra remediation tonight. < 75% → honest discussion of exam date.

@@ -2,7 +2,7 @@
 
 **Questions:** 40 · **Time:** 45 minutes · **Closed book** · Answers in `answer-keys.md` → *Mock Exam 01* (do not open until submitted).
 **Scope:** Days 1–7. **Format:** approximation of the real exam style — not official.
-Answer format in chat: `1. B (3)` — letter(s) + confidence 1/2/3.
+Write each answer as `1. B (3)`: letter(s) plus confidence 1/2/3.
 
 ---
 
@@ -299,4 +299,5 @@ What is a **speculative plan** in HCP Terraform?
 - D. A plan that runs on the user's laptop only.
 
 ---
-**Stop.** Submit answers in chat.
+**Stop.** Mark your answers with [answer-keys.md](answer-keys.md), record the score and per-domain results in
+[SCORECARD.md](../SCORECARD.md), and log every miss in [mistakes/error-log.md](../mistakes/error-log.md).

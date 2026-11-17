@@ -34,6 +34,22 @@ which real object belongs to which block — it would try to create everything a
 State lives in a **backend**. By default, a local file. In teams, a shared remote store
 (S3, HCP Terraform, Azure Storage, GCS…) with **locking** so two people can't write at once.
 
+
+### 🧠 Mental models (from the original 15-day notes)
+
+- **State locking = "someone is editing" in a shared document.** Two people may both want to
+  edit; the lock makes sure only one change commits at a time, so the second person waits or
+  gets a clear message instead of their edit silently vanishing.
+- **`state rm` vs `destroy` = tearing up the index card vs emptying the drawer.** `state rm`
+  removes Terraform's record; the real object is untouched. `destroy` actually deletes it.
+- **Classic import vs import block.** Classic `terraform import` hands you a card saying
+  "drawer 3 is yours" but no list of what's inside; you write the config yourself. An `import`
+  block with `-generate-config-out` also gives you a typed-up inventory to review.
+- **How S3-native locking works (1.10+).** With `use_lockfile = true`, Terraform tries to
+  create a `.tflock` object using an S3 *conditional write* that only succeeds if the object
+  doesn't exist yet. If another run holds the lock, the write fails and you get a lock error.
+  The lock object is deleted when the run finishes. No DynamoDB table is needed.
+
 ---
 
 ## C. Technical deep dive
@@ -429,6 +445,15 @@ Without the `moved` block: `1 to add, 0 to change, 1 to destroy`.
 - `terraform_remote_state` reads **outputs**, not arbitrary resource attributes.
 - Data sources are recorded in state too (mode `data`).
 
+**More traps from the original notes**
+- **The local backend does lock, but only on that one machine** (an OS file lock). It doesn't
+  protect teammates on other machines, and it's a single point of failure. (The original notes
+  said "no locking at all", which is not quite right.)
+- **S3 native locking needs Terraform 1.10+**; enable bucket **versioning** anyway, so you can
+  recover old state versions. The DynamoDB pattern is still valid but on its way out.
+- **Bare `terraform refresh` is deprecated**; the recommended form is
+  `plan/apply -refresh-only`.
+
 ---
 
 ## J. Active recall
@@ -487,11 +512,42 @@ local files exists but is legacy and awkward with remote backends.)
 **K5.** False — plan refreshes in memory only.
 </details>
 
+> Optional real-cloud practice: [AWS lab A6 — remote S3 backend, drift and state commands](../labs/aws-optional/README.md#a6--remote-state-drift-and-state-commands-day-5) and [A7 — import](../labs/aws-optional/README.md#a7--import-logging-and-cli-workspaces-days-5-6).
+
 ---
 
-## L. Lesson assessment
-12 scenario questions in chat (state rm vs destroy, moved, import order, backend
-restrictions, locking, migration, security). Pass mark **10/12** — state is high-weight.
+## L. Lesson assessment — mastery quiz
+
+Closed book. Write every answer down **before** opening the answers, and give each a confidence (1 = guess, 2 = unsure, 3 = sure). Pass mark: **9/11**. Record the score in [SCORECARD.md](../SCORECARD.md) and log misses in [mistakes/error-log.md](../mistakes/error-log.md).
+
+*These questions are the self-test questions from the original 15-day notes, corrected and regrouped by topic.*
+
+1. What problem does state locking solve, and what goes wrong without it?
+2. What must you run after editing the `backend` block?
+3. From Terraform 1.10, what lets the S3 backend lock without DynamoDB, and which argument enables it?
+4. What should be enabled on the state bucket itself, and why?
+5. How does `terraform apply -refresh-only` differ from a normal apply?
+6. Which command renames a resource in state without recreating it, and what's the config equivalent?
+7. Does `terraform state rm` delete the real resource?
+8. Why is the local backend risky for a team of five?
+9. Is bare `terraform refresh` the recommended way to sync drift?
+10. Does classic `terraform import` generate `.tf` configuration?
+11. What is the config-generating alternative?
+
+<details><summary>Answers</summary>
+
+1. It stops two operations writing state at the same time. Without it, both can read the same serial and the last write silently overwrites the other, leaving lost updates or orphaned resources.
+2. `terraform init`, which offers to migrate state; or explicitly `-migrate-state` / `-reconfigure`.
+3. S3 conditional writes create a lock object; enable with `use_lockfile = true`.
+4. Versioning, so earlier state versions can be recovered. Server-side encryption too, because state holds secrets.
+5. It updates state to match real infrastructure without changing infrastructure. A normal apply changes infrastructure to match config.
+6. `terraform state mv`; the config equivalent is a `moved` block.
+7. No. Terraform just forgets it. If the block is still in config, the next plan proposes creating a duplicate.
+8. State lives on one machine: no shared source of truth, no locking across machines, and a lost or corrupted file loses Terraform's record.
+9. No. It's deprecated; use `terraform plan -refresh-only` to preview and `apply -refresh-only` to accept.
+10. No. It only writes state, and the resource block must already exist.
+11. An `import { to = ADDR  id = "..." }` block plus `terraform plan -generate-config-out=FILE` (1.5+).
+</details>
 
 ## M. Summary
 - State = mapping + metadata + performance + sync. JSON, never hand-edit.

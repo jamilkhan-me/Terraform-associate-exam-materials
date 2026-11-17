@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terraform 004 Tracker</title>
+<style>
+  :root {
+    color-scheme: light;
+    --page: #f9f9f7; --surface: #fcfcfb; --text: #0b0b0b; --text-2: #52514e; --muted: #898781;
+    --grid: #e1e0d9; --border: rgba(11,11,11,0.10); --accent: #2a78d6; --good: #0b8a0b; --warn: #b26b00; --bad: #c0392b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --page: #0d0d0d; --surface: #1a1a19; --text: #ffffff; --text-2: #c3c2b7; --muted: #898781;
+      --grid: #2c2c2a; --border: rgba(255,255,255,0.10); --accent: #3987e5; --good: #2fb52f; --warn: #e0a030; --bad: #e0655a;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19; --text: #ffffff; --text-2: #c3c2b7; --muted: #898781;
+    --grid: #2c2c2a; --border: rgba(255,255,255,0.10); --accent: #3987e5; --good: #2fb52f; --warn: #e0a030; --bad: #e0655a;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--page); color: var(--text); }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 24px 16px 60px; }
+  header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 18px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .sub { color: var(--text-2); font-size: 14px; margin: 0; }
+  button { font: inherit; font-size: 12px; color: var(--text-2); background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 6px 12px; cursor: pointer; white-space: nowrap; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 18px; }
+  .card h2 { font-size: 15px; margin: 0 0 12px; }
+  .progress-row { display: flex; align-items: center; gap: 12px; }
+  .track { flex: 1; height: 10px; border-radius: 999px; background: var(--grid); overflow: hidden; }
+  .fill { height: 100%; background: var(--accent); width: 0; transition: width .25s ease; }
+  .label { font-size: 13px; color: var(--text-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  ul.check { list-style: none; margin: 0; padding: 0; }
+  ul.check li { display: flex; gap: 10px; align-items: flex-start; padding: 7px 0; border-top: 1px solid var(--grid); font-size: 14px; }
+  ul.check li:first-child { border-top: 0; }
+  ul.check input { margin-top: 3px; width: 16px; height: 16px; accent-color: var(--accent); flex: none; }
+  ul.check .meta { color: var(--muted); font-size: 12.5px; display: block; }
+  ul.check li.done span.t { text-decoration: line-through; color: var(--muted); }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; }
+  @media (max-width: 640px) { .cols { grid-template-columns: 1fr; } header { flex-direction: column; } }
+  .score-row { display: grid; grid-template-columns: 150px 74px 1fr 46px; gap: 10px; align-items: center; padding: 7px 0; border-top: 1px solid var(--grid); font-size: 14px; }
+  .score-row:first-child { border-top: 0; }
+  @media (max-width: 520px) { .score-row { grid-template-columns: 1fr 70px 44px; } .score-row .track { display: none; } }
+  .score-row input { width: 100%; font: inherit; font-size: 13px; padding: 4px 6px; border: 1px solid var(--border); border-radius: 6px; background: var(--page); color: var(--text); }
+  .pct { text-align: right; font-variant-numeric: tabular-nums; color: var(--text-2); font-size: 13px; }
+  .note { color: var(--muted); font-size: 12.5px; margin: 10px 0 0; }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Terraform Associate 004 — Tracker</h1>
+      <p class="sub">10 core days + 2 optional extension days · offline labs · six assessments</p>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button id="theme">Theme</button>
+      <button id="reset">Reset</button>
+    </div>
+  </header>
+
+  <div class="card">
+    <h2>Overall progress</h2>
+    <div class="progress-row"><div class="track"><div class="fill" id="overall"></div></div><span class="label" id="overall-label">0%</span></div>
+    <p class="note">Counts core days, offline labs and the four required assessments. Extension days and AWS labs are optional and not counted.</p>
+  </div>
+
+  <div class="card">
+    <h2>Days</h2>
+    <ul class="check" id="days"></ul>
+  </div>
+
+  <div class="card">
+    <h2>Assessment scores</h2>
+    <div id="scores"></div>
+    <p class="note">Bar colour: green ≥ 85% (study target), amber 75–84%, red below 75%. These are study targets, not official pass marks.</p>
+  </div>
+
+  <div class="card">
+    <h2>Labs</h2>
+    <div class="cols">
+      <ul class="check" id="labs"></ul>
+      <ul class="check" id="aws"></ul>
+    </div>
+  </div>
+</div>
+
+<script>
+const DAYS = [
+  ["d1", "Day 1 — Diagnostic + fundamentals", "IaC, architecture, config vs state vs reality · Lab 01"],
+  ["d2", "Day 2 — HCL, variables, expressions", "precedence, types, for/splat/dynamic, dependencies · Lab 02, 05"],
+  ["d3", "Day 3 — CLI and core workflow", "init/fmt/validate/plan/apply/destroy, logging · Lab 07"],
+  ["d4", "Day 4 — Providers, resources, lifecycle", "constraints, lock file, aliases, count/for_each, conditions · Lab 03, 04, 05"],
+  ["d5", "Day 5 — State (high priority)", "backends, locking, state commands, moved/removed/import · Lab 08, 09, 10"],
+  ["d6", "Day 6 — Modules and workspaces", "sources, scope, versions, CLI workspaces · Lab 06, 11"],
+  ["d7", "Day 7 — HCP Terraform and security", "workflows, runs, policies, secrets · Mock 1"],
+  ["d8", "Day 8 — Troubleshooting", "error catalogue, plan reading · Lab 12"],
+  ["d9", "Day 9 — Mock 2 + remediation", "57 Q / 60 min, then weakest five topics"],
+  ["d10", "Day 10 — Mock 3 + readiness", "57 Q / 60 min, rapid-fire, misconception test"],
+  ["d11", "Day 11 (optional) — Mock 4 + remediation", "50 Q / 50 min"],
+  ["d12", "Day 12 (optional) — Mock 5 + wind-down", "46 Q / 46 min, QUICK_REVISION"],
+];
+const LABS = [
+  "01 First configuration & workflow", "02 Variables, locals, outputs", "03 Resources vs data sources",
+  "04 Dependencies, lifecycle, conditions", "05 count, for_each, expressions", "06 Local modules",
+  "07 Plans & replacement", "08 State inspection & operations", "09 Import", "10 Backends & migration",
+  "11 CLI workspaces", "12 Troubleshooting broken configs",
+].map((t, i) => ["l" + (i + 1), "Lab " + t]);
+const AWS = [
+  "A1 First real workflow", "A2 fmt, validate, saved plans, drift", "A3 Variables & precedence",
+  "A4 Data sources, dependencies, lifecycle", "A5 First module", "A6 Remote state & state commands",
+  "A7 Import, logging, workspaces", "A8 HCP Terraform",
+].map((t, i) => ["a" + (i + 1), "AWS " + t + " (optional)"]);
+const TESTS = [
+  ["diag", "Diagnostic", 30], ["m1", "Mock 1", 40], ["m2", "Mock 2", 57],
+  ["m3", "Mock 3", 57], ["m4", "Mock 4 (opt.)", 50], ["m5", "Mock 5 (opt.)", 46],
+];
+const REQUIRED = [...DAYS.slice(0, 10).map(d => d[0]), ...LABS.map(l => l[0]), "diag", "m1", "m2", "m3"];
+
+const KEY = "tf004-tracker-v2";
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { state = {}; }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} render(); }
+
+function checklist(el, items) {
+  el.innerHTML = "";
+  for (const [id, title, meta] of items) {
+    const li = document.createElement("li");
+    const cb = document.createElement("input");
+    cb.type = "checkbox"; cb.checked = !!state[id]; cb.id = "cb-" + id;
+    cb.addEventListener("change", () => { state[id] = cb.checked; save(); });
+    const lab = document.createElement("label");
+    lab.htmlFor = cb.id;
+    lab.innerHTML = '<span class="t"></span>' + (meta ? '<span class="meta"></span>' : "");
+    lab.querySelector(".t").textContent = title;
+    if (meta) lab.querySelector(".meta").textContent = meta;
+    if (state[id]) li.classList.add("done");
+    li.append(cb, lab);
+    el.append(li);
+  }
+}
+
+function scores() {
+  const el = document.getElementById("scores");
+  el.innerHTML = "";
+  for (const [id, name, total] of TESTS) {
+    const row = document.createElement("div");
+    row.className = "score-row";
+    const val = state["s-" + id];
+    const pct = (val !== undefined && val !== "") ? Math.round(100 * Number(val) / total) : null;
+    const colour = pct === null ? "var(--grid)" : pct >= 85 ? "var(--good)" : pct >= 75 ? "var(--warn)" : "var(--bad)";
+    row.innerHTML = '<span></span><input type="number" min="0" inputmode="numeric"><div class="track"><div class="fill"></div></div><span class="pct"></span>';
+    row.children[0].textContent = name + " (/" + total + ")";
+    const input = row.children[1];
+    input.max = total; input.value = val ?? ""; input.setAttribute("aria-label", name + " score");
+    input.addEventListener("change", () => {
+      const n = input.value === "" ? "" : Math.max(0, Math.min(total, Number(input.value)));
+      state["s-" + id] = n; if (n !== "") state[id] = true; save();
+    });
+    row.querySelector(".fill").style.width = (pct ?? 0) + "%";
+    row.querySelector(".fill").style.background = colour;
+    row.children[3].textContent = pct === null ? "—" : pct + "%";
+    el.append(row);
+  }
+}
+
+function render() {
+  checklist(document.getElementById("days"), DAYS);
+  checklist(document.getElementById("labs"), LABS);
+  checklist(document.getElementById("aws"), AWS);
+  scores();
+  const done = REQUIRED.filter(id => state[id]).length;
+  const pct = Math.round(100 * done / REQUIRED.length);
+  document.getElementById("overall").style.width = pct + "%";
+  document.getElementById("overall-label").textContent = pct + "% (" + done + "/" + REQUIRED.length + ")";
+}
+
+document.getElementById("reset").addEventListener("click", () => {
+  if (confirm("Clear all progress and scores?")) { state = {}; save(); }
+});
+document.getElementById("theme").addEventListener("click", () => {
+  const root = document.documentElement;
+  const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  root.dataset.theme = dark ? "light" : "dark";
+});
+render();
+</script>
+</body>
+</html>
