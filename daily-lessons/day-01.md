@@ -42,6 +42,25 @@ It talks to platforms via **providers** — plugins that know a specific API (AW
 GitHub, Kubernetes, Datadog, even "random" and "local file"). Terraform itself knows
 nothing about S3 or Lambda; the AWS provider does.
 
+
+### 🧠 Mental models (from the original 15-day notes)
+
+- **Pets vs cattle (immutable infrastructure).** A pet has a name and you nurse it back to
+  health; cattle are numbered and replaceable. "SSH in and patch the server" is pet thinking;
+  "destroy it and let Terraform build a fresh one from code" is cattle thinking.
+- **GPS vs dictated directions (declarative vs imperative).** A GPS only needs the
+  destination and recalculates if something changes. Dictated turn-by-turn directions assume
+  a starting point; if anything changed, they are simply wrong.
+- **Operating system and device drivers (Core vs providers).** The OS (Terraform Core) offers
+  one consistent interface but has no idea how a particular printer works; the driver
+  (provider) does. Swap the driver and the OS works the same way against different hardware.
+- **Coat-check ticket (state).** The ticket doesn't contain your coat, but it's the only
+  reliable way to match "the coat on this ticket" to the coat on hook #47. Lose the ticket and
+  the coat still exists, but nobody can say which one is yours.
+- **Own it vs look it up (resource vs data).** Owning a car means buying, maintaining and
+  scrapping it (resource). Looking up the market value of a car is reading a fact you can't
+  change (data source).
+
 ---
 
 ## C. Technical deep dive
@@ -381,6 +400,17 @@ terraform apply
 - **"Terraform is a configuration management tool"** — HashiCorp frames it as a provisioning
   / orchestration tool.
 
+**More traps from the original notes**
+- **"Idempotent" ≠ "does nothing".** The first apply does create resources; only a re-run
+  with nothing changed is a no-op.
+- **"Terraform can only manage cloud resources"** — false: providers exist for SaaS (GitHub,
+  Datadog, PagerDuty), on-prem (vSphere) and utilities (`random`, `local`, `time`).
+- **IaC (the practice) vs Terraform (one tool).** Ansible/Chef/Puppet are also IaC in a broad
+  sense but are configuration-management tools; Terraform is a provisioning tool. They are
+  complementary.
+- **Lock file vs state file in Git:** commit `.terraform.lock.hcl`; never commit
+  `terraform.tfstate`.
+
 ---
 
 ## J. Active recall (answer before expanding)
@@ -448,19 +478,44 @@ backup/versioned backend, or `import` the existing objects.
 file" / "Required plugins are not installed" — run `terraform init`.
 </details>
 
----
-
-## L. Lesson assessment (mastery quiz — given in chat)
-
-The instructor will ask 8 questions in chat covering: declarative vs imperative, provider
-architecture, the C5 table, resource vs data source addressing, provider tiers, and the
-workflow. Pass mark: **7/8**.
-
-Self-check prompt (explain aloud in < 60 seconds each):
-1. "Explain to a junior engineer why Terraform needs a state file."
-2. "Explain why `terraform plan` showed a change when nobody edited the code."
+> Optional real-cloud practice: [AWS lab A1 — first workflow](../labs/aws-optional/README.md#a1--first-real-workflow-days-1-3).
 
 ---
+
+## L. Lesson assessment — mastery quiz
+
+Closed book. Write every answer down **before** opening the answers, and give each a confidence (1 = guess, 2 = unsure, 3 = sure). Pass mark: **10/12**. Record the score in [SCORECARD.md](../SCORECARD.md) and log misses in [mistakes/error-log.md](../mistakes/error-log.md).
+
+*These questions are the self-test questions from the original 15-day notes, corrected and regrouped by topic.*
+
+1. In one sentence, what is the core difference between declarative and imperative infrastructure tools?
+2. List four advantages of IaC over manual console changes.
+3. Define idempotency and explain why it matters operationally.
+4. What does immutable infrastructure mean, and how does it differ from patching in place?
+5. True or false: Terraform can only manage cloud resources.
+6. Provisioning tool vs configuration-management tool: which is Terraform?
+7. What does "service-agnostic workflow" mean for Terraform?
+8. Why should a state file never be committed to a public Git repository?
+9. Is state "just a cache" or the source of truth? Explain.
+10. Name the three provider maintainer tiers.
+11. What is the fundamental difference between a `resource` block and a `data` block, and how do you reference each?
+12. Can a `data` block ever create infrastructure? What does a data source look like in a plan?
+
+<details><summary>Answers</summary>
+
+1. Declarative tools (Terraform) take a description of the desired end state and work out the steps; imperative tools (a shell script) execute steps you specify, with no built-in awareness of current state.
+2. Any four of: consistency across environments, version control and peer review, automation (CI/CD), reusability (modules), auditability / change history, fewer human errors, fast disaster recovery, drift detection.
+3. Re-applying the same configuration to the same infrastructure converges on the same end state, doing nothing if nothing changed. It makes it safe to run Terraform repeatedly (e.g. on every merge) without duplicates.
+4. Replace a component with a new one built from code instead of modifying it while it runs. Patching in place accumulates drift and creates "pets" nobody can reproduce exactly.
+5. False. Providers exist for on-prem systems, SaaS tools and utilities such as `random`, `local` and `time`.
+6. Provisioning: it creates and destroys infrastructure. Configuration management (Ansible, Chef, Puppet) installs and configures software on existing servers. They're often combined.
+7. The same write → plan → apply workflow and language work for every platform; platform-specific logic lives in provider plugins, not in Terraform Core. (The *code* is not portable between clouds.)
+8. State stores every attribute in plain text, which can include passwords, keys and internal addresses. Once committed, it stays in Git history.
+9. Both, but the mapping role is what makes it essential: state links each resource address to a real object ID. Caching attribute values is a secondary performance benefit.
+10. Official (HashiCorp), Partner (the technology vendor, verified by HashiCorp), Community (individuals).
+11. A resource's full lifecycle is managed by Terraform (`TYPE.NAME.ATTR`); a data source only reads something that already exists (`data.TYPE.NAME.ATTR`).
+12. Never; it is read-only. Usually it's read during plan and shows no action. If the read must wait until apply (unknown arguments, `depends_on`), it appears as `<= read`. It never shows `+`, `~` or `-`.
+</details>
 
 ## M. Summary
 

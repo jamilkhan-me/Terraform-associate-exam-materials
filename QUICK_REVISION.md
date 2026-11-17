@@ -1,9 +1,24 @@
 # QUICK REVISION — Final Sheet
 
 Read in the last 24 hours. Every section links to the detailed lesson.
-Assumed exam: Terraform Associate **004** (see EXAM_OBJECTIVES.md for uncertainties).
+Exam: Terraform Associate **004** (see [EXAM_OBJECTIVES.md](EXAM_OBJECTIVES.md) for format and uncertainties).
+
+> **Only 10 minutes left?** Read section 0, the "Frequently confused pairs" table (8), and your
+> personal [weak-topics list](flashcards/weak-topics.md). That routine comes from the original notes.
 
 ---
+
+## 0. The ten facts most often missed
+1. `~> 2.3` = `>= 2.3, < 3.0` (allows 2.4!) · `~> 2.3.0` = `>= 2.3.0, < 2.4.0`.
+2. Plan symbols: `+` create · `-` destroy · `~` update in place · `-/+` replace (destroy first) · `+/-` replace with `create_before_destroy` · `<=` data read deferred to apply.
+3. Precedence: default < `TF_VAR_` < `terraform.tfvars` < `.tfvars.json` < `*.auto.tfvars` < `-var`/`-var-file`.
+4. `sensitive = true` hides output only; state is still plain text.
+5. `state rm` forgets (resource keeps running) · `destroy` deletes.
+6. `validate` never calls an API · `plan` never writes state · `apply tfplan` never prompts.
+7. Default parallelism **10** · `TF_LOG` levels ERROR < WARN < INFO < DEBUG < TRACE · `TF_LOG_PATH` needs `TF_LOG`.
+8. Child modules inherit **default** providers automatically; **aliased** ones are passed with `providers = {}`. Variables are never inherited.
+9. Local backend locks only on its own machine; S3 native locking = `use_lockfile = true` (1.10+).
+10. CLI workspace (alternate state) ≠ HCP Terraform workspace (config + state + vars + permissions + runs).
 
 ## 1. The three worlds ([Day 1](daily-lessons/day-01.md))
 ```

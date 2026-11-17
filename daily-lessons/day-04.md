@@ -29,6 +29,20 @@ When you need several similar resources, `count` stamps out N numbered copies; `
 stamps out one copy per key of a map/set. **Lifecycle** settings tweak *how* Terraform
 replaces, protects, or ignores changes on a resource.
 
+
+### 🧠 Mental models (from the original 15-day notes)
+
+- **`~>` = "lock everything except the last number I typed".** Two numbers typed
+  (`~> 5.0`) → the minor may climb, the major is locked. Three typed (`~> 5.0.4`) → only the
+  patch may climb. Learn the rule, not individual examples.
+- **`count` = numbered parking spaces; `for_each` = spaces with names painted on.** If car #2
+  leaves, #3 doesn't become #2 in real life, but in `count` it does, so everything after it
+  shifts. With `for_each`, "Priya's space" stays Priya's whatever else comes or goes.
+- **Custom conditions = checkpoints on an assembly line.** `validation` is the intake
+  inspector checking raw materials; `precondition` is "is this station ready?"; `postcondition`
+  is quality control as the part leaves; a `check` block is the building-wide alarm that warns
+  without stopping the line.
+
 ---
 
 ## C. Technical deep dive
@@ -435,6 +449,16 @@ time ─────────────────────►         
 - "Force replacement when the app version changes" → `replace_triggered_by` (or `-replace` one-off).
 - Provisioner failure → resource **tainted**, not rolled back.
 
+**More traps from the original notes**
+- **A `provider` block isn't always required.** If nothing needs configuring, Terraform uses
+  an empty default configuration (credentials/region can come from environment variables).
+- **`~> 1.4` does NOT mean "1.4.x only".** It means `>= 1.4, < 2.0`, so 1.9 is allowed. Only
+  `~> 1.4.0` limits you to 1.4.x. (The original notes got this wrong once.)
+- **`count` is not deprecated.** `for_each` is *preferred* for distinct items; `count` is
+  still right for identical copies and on/off toggles.
+- **`prevent_destroy` also blocks replacement** (a `-/+` on a protected resource errors).
+- **`ignore_changes = all`** ignores every attribute; a list ignores only those listed.
+
 ---
 
 ## J. Active recall
@@ -509,11 +533,50 @@ resource "aws_s3_bucket" "dr" {
 `lifecycle { create_before_destroy = true }` → `+/-`.
 </details>
 
+> Optional real-cloud practice: [AWS lab A4 — data sources, dependencies and lifecycle](../labs/aws-optional/README.md#a4--data-sources-dependencies-and-lifecycle-day-4).
+
 ---
 
-## L. Lesson assessment
-10 questions: 2 version constraints, 3 count/for_each predictions, 3 lifecycle selection, 1
-provisioner, 1 aliases. Pass mark **8/10**.
+## L. Lesson assessment — mastery quiz
+
+Closed book. Write every answer down **before** opening the answers, and give each a confidence (1 = guess, 2 = unsure, 3 = sure). Pass mark: **13/15**. Record the score in [SCORECARD.md](../SCORECARD.md) and log misses in [mistakes/error-log.md](../mistakes/error-log.md).
+
+*These questions are the self-test questions from the original 15-day notes, corrected and regrouped by topic.*
+
+1. What does `~> 1.4` allow, and what does it forbid?
+2. What is `.terraform.lock.hcl` for, and should it be committed?
+3. How do you configure two regions of the same provider, and point a resource at the non-default one?
+4. If a plan shows `-/+` instead of `~`, what will happen?
+5. What's the practical difference between `list` and `set` that matters for `for_each`?
+6. What is the advantage of `for_each` over `count` when an item is removed from the middle?
+7. What input types does `for_each` accept?
+8. Is `count` deprecated now that `for_each` exists?
+9. What value does `count.index` start at?
+10. Precondition vs postcondition: when does each run?
+11. Which lifecycle setting stops a resource being destroyed, including by replacement?
+12. Which block validates a variable's input at plan time, before any resource is touched?
+13. How does a `check` block differ from pre/postconditions?
+14. What does `create_before_destroy` achieve? Give an example.
+15. When would you use `replace_triggered_by`?
+
+<details><summary>Answers</summary>
+
+1. Allows `>= 1.4, < 2.0` (1.4.0, 1.5, 1.9.3 …); forbids 2.0 and above. Only `~> 1.4.0` would restrict you to 1.4.x.
+2. It records the selected provider versions, constraints and checksums so everyone and every CI run uses identical providers. Yes, commit it. (It does not cover modules.)
+3. A second `provider` block with `alias = "west"`; the resource sets `provider = aws.west`.
+4. The resource will be destroyed and recreated (replaced), because a changed attribute can't be updated in place (`# forces replacement`).
+5. Lists are ordered and allow duplicates; sets are unordered and unique. `for_each` needs a map or set so each instance has a stable unique key; convert lists with `toset()`.
+6. With `for_each` only that key is destroyed. With `count`, every later index shifts, so unrelated resources get updated or replaced.
+7. A map, or a set of strings. A list must be wrapped in `toset()`.
+8. No. It's fully supported; `for_each` is preferred for distinct, individually addressed items.
+9. 0.
+10. A precondition checks an assumption before the resource's change is planned/applied; a postcondition checks the result afterwards (it can use `self`).
+11. `prevent_destroy = true`.
+12. A `validation` block inside the `variable` block.
+13. A failed `check` assertion is a warning and the run continues; pre/postcondition failures are errors that stop the run.
+14. On replacement, the new object is created before the old one is destroyed, avoiding downtime, e.g. an instance or launch template behind a load balancer. Watch out for unique-name collisions.
+15. To force replacement of this resource whenever a referenced resource or attribute changes, even though its own config didn't (e.g. rebuild instances when an app version changes).
+</details>
 
 ## M. Summary
 - `required_providers` (source + version) · `~>` = pessimistic · lock file = providers, commit it.

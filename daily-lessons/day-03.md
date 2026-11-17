@@ -30,6 +30,18 @@ providers lock  test                                      providers            w
                                                           version
 ```
 
+
+### 🧠 Mental models (from the original 15-day notes)
+
+- **Three different "is this okay?" checks.** `init` = "do I have the *tools*?" (providers,
+  modules, backend). `validate` = "is my *grammar* right?" (local, like a spellchecker).
+  `fmt` = "is my *handwriting* neat?" (cosmetic). None of them touches real infrastructure.
+- **`plan` = a contractor's written estimate; `apply` = the crew doing the work.** A good
+  estimate starts by walking the site (refresh). Saving the plan and applying *that file* is
+  how you make sure the work matches the estimate you signed.
+- **`TF_LOG` = a narration dial.** From "only tell me if something broke" (`ERROR`) to
+  "narrate everything" (`TRACE`). Turn it up only to find a specific problem.
+
 ---
 
 ## C. Technical deep dive
@@ -55,6 +67,7 @@ What it does:
 | `-backend-config=FILE or KEY=VALUE` | Supply partial backend settings (secrets, per-env bucket) |
 | `-input=false` | Never prompt (CI) |
 | `-get=false` | Skip module installation |
+| `-from-module=SOURCE` | Copy a module into an empty directory, then initialise it (rarely used shortcut) |
 | `-lockfile=readonly` | Fail rather than modify the lock file |
 
 Directory after init:
@@ -294,6 +307,17 @@ force-unlock      -          -          -       lock only         -
 - **"Which command formats code?"** — `fmt`. Not `validate`, not `lint`.
 - `destroy` = `apply -destroy`, *not* `plan -destroy` (that's a preview).
 
+**More traps from the original notes**
+- **`validate` never contacts a provider API**, however the question is phrased. It can't
+  catch "this AMI doesn't exist"; only plan/apply can.
+- **`fmt -check` does not rewrite files**; that's the point of using it in CI.
+- **Default parallelism is 10**, not 1 and not unlimited (`-parallelism=N`).
+- **`destroy` = `apply -destroy`**, so don't be thrown by the less familiar form.
+- **State is written after each resource operation**, not once at the end: if resource 7 of
+  10 fails, resources 1–6 are already recorded.
+- **First thing to check when apply fails mysteriously against a cloud:** credentials
+  (e.g. `aws sts get-caller-identity`), before doubting your HCL.
+
 ---
 
 ## J. Active recall
@@ -343,11 +367,60 @@ force-unlock      -          -          -       lock only         -
 10. `terraform force-unlock a1b2` — after confirming no run is active
 </details>
 
+> Optional real-cloud practice: [AWS lab A2 — init, fmt, validate, plan files and drift](../labs/aws-optional/README.md#a2--fmt-validate-saved-plans-and-drift-day-3).
+
 ---
 
-## L. Lesson assessment
-30-scenario command-selection drill in chat (rapid answers), then 8 multiple-choice
-questions. Pass mark: **≥ 85%** on the drill, **7/8** on MCQs.
+## L. Lesson assessment — mastery quiz
+
+Closed book. Write every answer down **before** opening the answers, and give each a confidence (1 = guess, 2 = unsure, 3 = sure). Pass mark: **17/20**. Record the score in [SCORECARD.md](../SCORECARD.md) and log misses in [mistakes/error-log.md](../mistakes/error-log.md).
+
+*These questions are the self-test questions from the original 15-day notes, corrected and regrouped by topic.*
+
+1. Which command downloads providers, and which other file does it create or update?
+2. Which two artifacts does `init` create, and which one do you commit?
+3. Does `terraform validate` contact a cloud provider's API? Why does it matter?
+4. What is the practical difference between `fmt` and `validate`?
+5. What does `terraform fmt -check` do, and why is it useful in CI?
+6. What must you run after changing the `backend` block, and which flags matter?
+7. What does `terraform init -from-module=SOURCE` do?
+8. Put in workflow order: apply, init, plan, destroy.
+9. Walk through what `terraform plan` does internally.
+10. Bare `terraform apply` vs `terraform apply tfplan`: what's the difference in risk?
+11. Default number of concurrent operations during apply, and how do you change it?
+12. What replaced the deprecated `terraform taint`?
+13. Why is routine use of `-target` discouraged?
+14. Which plan symbols mean replacement?
+15. Is `terraform destroy` functionally different from `terraform apply -destroy`?
+16. Does `terraform plan` refresh against real infrastructure by default? Does it save the result?
+17. If apply fails mysteriously against AWS, what do you check first?
+18. Order the log levels from least to most verbose: WARN, TRACE, ERROR, DEBUG, INFO.
+19. What does `TF_LOG_PATH` do? Does it change verbosity?
+20. Which command shows the current state or a saved plan in human-readable form?
+
+<details><summary>Answers</summary>
+
+1. `terraform init`; it writes `.terraform.lock.hcl`.
+2. `.terraform/` (plugins and modules; never commit) and `.terraform.lock.hcl` (commit).
+3. No. So it can't catch errors such as a non-existent resource ID or missing permissions; those surface at plan/apply.
+4. `fmt` rewrites style only and catches no errors. `validate` checks syntax, references and types, and never changes files.
+5. It exits non-zero if any file isn't canonically formatted, without rewriting anything. That fails the build without silently changing a developer's code.
+6. `terraform init`, with `-migrate-state` (copy existing state) or `-reconfigure` (start fresh, no copy).
+7. Copies the given module into an empty directory and initializes it in one step.
+8. init → plan → apply → (eventually) destroy.
+9. Load config → read state → refresh (query providers for real values) → diff desired vs current → print the proposed actions. Nothing is written, not even state.
+10. Bare apply computes a fresh plan, which could differ from one reviewed earlier. Applying the saved plan executes exactly what was reviewed, with no prompt, and is rejected if state changed (stale plan).
+11. 10; use `-parallelism=N`.
+12. `terraform apply -replace=ADDRESS` (or `plan -replace=` to preview).
+13. It bypasses part of the dependency graph, so state and config can diverge from what a full plan would produce. It's for exceptional recovery only.
+14. `-/+` (destroy then create, the default) and `+/-` (create then destroy, with `create_before_destroy`).
+15. No; `destroy` is an alias for it.
+16. Yes, it refreshes by default (unless `-refresh=false`). No, the refreshed values are kept in memory only.
+17. Credentials/authentication (e.g. `aws sts get-caller-identity`), then use `TF_LOG` if needed.
+18. ERROR → WARN → INFO → DEBUG → TRACE.
+19. It writes logs to a file. It doesn't change verbosity, and logging only happens if `TF_LOG` is also set.
+20. `terraform show` (or `terraform show tfplan`); add `-json` for machine-readable output.
+</details>
 
 ## M. Summary
 - `init` (backend, modules, providers, lock) · `fmt` style · `validate` static · `plan` diff · `apply` change · `destroy` = `apply -destroy`.

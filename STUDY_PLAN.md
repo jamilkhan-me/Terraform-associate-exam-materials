@@ -1,11 +1,13 @@
-# 10-Day Study Plan
+# Study Plan
 
-Target: sit the Terraform Associate (assumed 004) exam on or just after **Day 10**.
-Daily load: **3.5–5 hours** (adjust, but do not skip assessments).
+One path: **10 core days** plus **2 extension days** (Mocks 4 and 5) if your readiness check on
+Day 10 says "borderline", or if you have time before the exam. Sit the exam on or just after
+the last day you use. Daily load: **3.5–5 hours** (adjust, but don't skip assessments).
+Short on daily hours? See the [relaxed 15-day pacing](#relaxed-pacing-15-days) at the bottom.
 
 Each day follows [DAILY_CHECKLIST.md](DAILY_CHECKLIST.md): recall test → lesson → lab →
 quiz → marking → tracker update. A day is only "complete" once its mastery assessment
-is passed (≥ 80% on the end-of-day quiz, or re-teach first).
+(section L of the lesson) is passed, or the weak part has been re-studied.
 
 ---
 
@@ -23,6 +25,8 @@ is passed (≥ 80% on the end-of-day quiz, or re-teach first).
 | 8 | Troubleshooting + mixed scenarios | All, esp. 6d, 7c | L07, L12 | Error-diagnosis gauntlet |
 | 9 | Full mock + remediation | All | Targeted re-labs | **Mock Exam 2** (57 Q, 60 min) |
 | 10 | Final assessment + readiness | All | — | **Mock Exam 3** (57 Q, 60 min) + rapid-fire |
+| 11 *(ext.)* | Second fresh check | All, weak domains | Matching AWS lab (optional) | **Mock Exam 4** (50 Q, 50 min) |
+| 12 *(ext.)* | Final check + rest | All | — | **Mock Exam 5** (46 Q, 46 min) + QUICK_REVISION |
 
 ---
 
@@ -122,3 +126,48 @@ is passed (≥ 80% on the end-of-day quiz, or re-teach first).
   subsequent recall test until answered correctly three times.
 - Mock 2 < 75% → Day 10 becomes remediation + a shorter final check; consider whether
   the exam date is realistic (honest conversation, not false confidence).
+- Day 10 readiness rubric shows **borderline** anywhere → use the extension days: Day 11 remediate
+  the weak domains first, then sit Mock 4; Day 12 sit Mock 5 and stop studying by the evening.
+
+---
+
+### Day 11 — Extension: Mock 4 and remediation (≈3.5 h, optional)
+| Block | Time | Activity |
+|---|---|---|
+| 1 | 90 min | Re-study the 2–3 weakest domains from Mock 3: lesson sections C, H, I + the matching remediation block in [day-09.md](daily-lessons/day-09.md) |
+| 2 | 50 min | **[Mock Exam 4](practice-exams/mock-exam-04.md)** — 50 Q, 50 min, closed book |
+| 3 | 40 min | Mark, log misses, update weak topics |
+| 4 | 30 min | Optional: one [AWS lab](labs/aws-optional/README.md) for your weakest hands-on topic |
+
+### Day 12 — Extension: Mock 5 and wind-down (≈2.5 h, optional)
+| Block | Time | Activity |
+|---|---|---|
+| 1 | 46 min | **[Mock Exam 5](practice-exams/mock-exam-05.md)** — 46 Q, 46 min |
+| 2 | 40 min | Mark; re-read explanations for every miss *and* every lucky guess |
+| 3 | 30 min | [QUICK_REVISION.md](QUICK_REVISION.md) + [weak-topics](flashcards/weak-topics.md). No new material after this. |
+
+---
+
+## Relaxed pacing (15 days)
+
+The original 15-day notes spread the material at ~2 hours a day. If that suits you better, follow
+the same lessons in this order. Every assessment stays the same.
+
+| Day | Do |
+|---|---|
+| 1 | Diagnostic test + Day 1 lesson (C1–C3, IaC) |
+| 2 | Day 1 lesson (C4–C8) + Lab 01 + Day 1 quiz |
+| 3 | Day 2 lesson (C1–C5: HCL, variables, types, outputs) + Lab 02 |
+| 4 | Day 2 lesson (C6–C8: expressions, functions, dependencies) + Day 2 quiz |
+| 5 | Day 3 lesson + Lab 07 + Day 3 quiz |
+| 6 | Day 4 lesson (C1–C5) + Labs 03, 05 |
+| 7 | Day 4 lesson (C6–C10) + Lab 04 + Day 4 quiz |
+| 8 | Day 5 lesson (C1–C6) + Lab 08 |
+| 9 | Day 5 lesson (C7–C12) + Labs 09, 10 + Day 5 quiz |
+| 10 | Day 6 lesson + Labs 06, 11 + Day 6 quiz |
+| 11 | Day 7 lesson + Day 7 quiz |
+| 12 | Mock Exam 1 + Day 8 lesson + Lab 12 |
+| 13 | Mock Exam 2 + Day 9 remediation |
+| 14 | Mock Exam 3 + Day 10 rapid-fire and misconception test |
+| 15 | Mock Exam 4 (Mock 5 the morning before the exam, if you like) + QUICK_REVISION |
+

@@ -31,6 +31,20 @@ locked and versioned; runs executed on managed workers (consistent environment, 
 credentials on laptops); plans automatically posted to pull requests; approval gates;
 policy checks that can block risky changes; a private module registry; and access control.
 
+
+### 🧠 Mental models (from the original 15-day notes)
+
+- **HCP Terraform = the same script run through a governed release pipeline.** Your `.tf`
+  files and the plan/apply mental model don't change. What's added: a review gate between
+  "here's what I'll do" and "done" (Sentinel/OPA), a shared audit trail, permission to pull
+  the trigger, and short-lived credentials instead of a master key.
+- **`sensitive = true` = a redacted photocopy.** The line shows `(sensitive value)` on screen,
+  but the original document (state) still has the real text underneath.
+- **Execution modes = where the work happens, not how it's triggered.** Remote: HCP's
+  workers. Local: your machine, HCP only stores state. Agent: your own runner inside a
+  private network that HCP can't reach. Workflows (VCS / CLI / API) are a separate question:
+  *how a run starts*.
+
 ---
 
 ## C. Technical deep dive
@@ -252,6 +266,15 @@ map it to HCP Terraform vocabulary.
 - Policy enforcement level that allows override → **soft-mandatory**.
 - Where to put shared AWS credentials for 30 workspaces → **variable set** (or dynamic credentials).
 
+**More traps from the original notes**
+- **Cost estimation** covers supported resources on the major clouds (AWS, Azure, GCP), not
+  every provider, and runs after plan, before apply.
+- **Agent mode** is for infrastructure with **no public network access**, not just "teams who
+  prefer local execution" (that's Local mode).
+- **HCP Terraform extends, not replaces, open-source Terraform.** Same language, same CLI.
+- **Vault data sources still put the secret in state.** Vault solves "no secrets in `.tf`/Git";
+  ephemeral resources and write-only arguments solve "no secrets in state".
+
 ---
 
 ## J. Active recall
@@ -293,10 +316,42 @@ exceptions. Which feature and enforcement level?
 **K4.** False — outputs are stored in state; sensitive only redacts display.
 </details>
 
+> Optional real-cloud practice: [AWS lab A8 — HCP Terraform free tier](../labs/aws-optional/README.md#a8--hcp-terraform-cli-driven-workflow-day-7).
+
 ---
 
-## L. Lesson assessment
-10 questions (6 HCP Terraform, 4 security). Pass **8/10**. Then **Mock Exam 1**.
+## L. Lesson assessment — mastery quiz
+
+Closed book. Write every answer down **before** opening the answers, and give each a confidence (1 = guess, 2 = unsure, 3 = sure). Pass mark: **9/11**. Record the score in [SCORECARD.md](../SCORECARD.md) and log misses in [mistakes/error-log.md](../mistakes/error-log.md).
+
+*These questions are the self-test questions from the original 15-day notes, corrected and regrouped by topic.*
+
+1. Does `sensitive = true` encrypt the value in state?
+2. What is the recommended way to provide real secrets instead of plaintext `.tfvars`?
+3. What was HCP Terraform previously called?
+4. Differentiate Remote, Local and Agent execution modes.
+5. What do Sentinel and OPA provide, and when do they run?
+6. What are the Sentinel enforcement levels and what does each do on failure?
+7. What does the `cloud` block enable?
+8. Security benefit of dynamic provider credentials over static workspace credentials?
+9. What groups related workspaces for organization and shared access?
+10. In a VCS-driven workflow, what triggers a speculative plan vs a real run?
+11. Which clouds does cost estimation cover?
+
+<details><summary>Answers</summary>
+
+1. No. It only redacts CLI/UI output; state holds plain text.
+2. A secrets manager such as Vault (via its provider), sensitive workspace variables, or CI secrets passed as `TF_VAR_`. Plus ephemeral values / write-only arguments to keep them out of state, and protect state either way.
+3. Terraform Cloud. (Terraform Enterprise is the self-hosted edition.)
+4. Remote: runs on HCP-managed workers (default). Local: runs on your machine, and HCP only stores state. Agent: runs on self-hosted agents inside your network.
+5. Policy as code, evaluated after plan (and cost estimation) and before apply.
+6. Advisory: warns and the run continues. Soft-mandatory: blocks unless an authorized user overrides. Hard-mandatory: blocks, no override.
+7. The CLI-driven workflow: local `terraform plan/apply` run in an HCP Terraform workspace, which also stores state. Authenticate first with `terraform login`.
+8. Each run gets short-lived OIDC credentials that expire quickly; a leaked static key stays valid until someone rotates it.
+9. A project.
+10. Opening or updating a pull request → speculative plan (can't be applied). Merging to the tracked branch → a real run (applied after confirmation, or automatically if auto-apply is on).
+11. Supported resources on AWS, Azure and GCP.
+</details>
 
 ## M. Summary
 - HCP Terraform: org → project → workspace → runs; teams for access.

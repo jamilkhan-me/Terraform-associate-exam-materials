@@ -1,7 +1,7 @@
 # Answer Keys
 
 > ⚠ **Spoilers.** Only open the section for an assessment you have already submitted.
-> Sections: [Diagnostic](#diagnostic-test) · [Mock 1](#mock-exam-01) · [Mock 2](#mock-exam-02) · [Mock 3](#mock-exam-03)
+> Sections: [Diagnostic](#diagnostic-test) · [Mock 1](#mock-exam-01) · [Mock 2](#mock-exam-02) · [Mock 3](#mock-exam-03) · [Mock 4](#mock-exam-04) · [Mock 5](#mock-exam-05)
 
 Domain tags: D1 IaC · D2 Fundamentals · D3 Workflow/CLI · D4 Configuration · D5 Modules ·
 D6 State · D7 Maintain · D8 HCP Terraform
@@ -367,3 +367,267 @@ Domain counts: D1 4 · D2 7 · D3 10 · D4 14 · D5 6 · D6 7 · D7 4 · D8 5 = 
 55. **Refused.** VCS-connected workspaces only apply runs triggered through VCS (CLI speculative plans are still allowed).
 56. **Cost estimation** comes after plan and before policy checks.
 57. **Self-hosted distribution of HCP Terraform.** Same Terraform language and CLI.
+
+---
+
+## Mock Exam 04
+
+| Q | Answer | Domain | Q | Answer | Domain |
+|---|---|---|---|---|---|
+| 1 | C | D1 | 26 | B | D4 |
+| 2 | A | D3 | 27 | D | D4 |
+| 3 | D | D2 | 28 | A | D4 |
+| 4 | D | D3 | 29 | B | D4 |
+| 5 | C | D4 | 30 | C | D7 |
+| 6 | B | D4 | 31 | D | D4 |
+| 7 | B | D4 | 32 | C | D3 |
+| 8 | D | D4 | 33 | C | D4 |
+| 9 | A | D4 | 34 | B | D2 |
+| 10 | A | D4 | 35 | B | D3 |
+| 11 | D | D3 | 36 | D | D5 |
+| 12 | B | D3 | 37 | D | D5 |
+| 13 | C | D4 | 38 | B | D5 |
+| 14 | C | D6 | 39 | C | D5 |
+| 15 | B | D4 | 40 | A | D6 |
+| 16 | A | D4 | 41 | A | D6 |
+| 17 | A | D2 | 42 | A | D6 |
+| 18 | B | D2 | 43 | B | D6 |
+| 19 | D | D3 | 44 | B | D6 |
+| 20 | D | D3 | 45 | D | D6 |
+| 21 | A | D5 | 46 | A | D7 |
+| 22 | B | D5 | 47 | D | D7 |
+| 23 | A | D3 | 48 | C | D7 |
+| 24 | C | D4 | 49 | A | D7 |
+| 25 | C | D4 | 50 | C | D8 |
+
+Domain counts: D1 1 · D2 4 · D3 9 · D4 17 · D5 6 · D6 7 · D7 5 · D8 1 = 50.
+Answer spread: A 13 · B 13 · C 12 · D 12.
+
+### Explanations
+
+**Q1 — C: Declarative: you describe the desired end state and Terraform works out the actions to reach it.** Terraform compares desired state (config) with current state (refreshed state) and derives the steps. Scripts that list API calls are imperative.
+
+**Q2 — A: `terraform init`** `init` configures the backend, installs modules and providers, and writes the lock file. `get` only downloads modules.
+
+**Q3 — D: `~> 2.3.0`** `~> 2.3.0` means `>= 2.3.0, < 2.4.0`: only the patch number may increase. **Trap:** `~> 2.3` means `>= 2.3, < 3.0`, so it *allows* 2.4.0. (The original 15-day notes had this one wrong.)
+
+**Q4 — D: Syntax and internal consistency of the configuration, without contacting any provider API or reading state.** `validate` is a static check (it needs providers installed for their schemas, but never calls their APIs). It can't tell you an AMI ID doesn't exist; only plan/apply can.
+
+**Q5 — C: Reading information about existing objects that this configuration does not manage.** Data sources are read-only. They never create, update or destroy anything. Outputs are declared with `output` blocks.
+
+**Q6 — B: The `-var` command-line value.** Lowest to highest: default → `TF_VAR_` → `terraform.tfvars` → `terraform.tfvars.json` → `*.auto.tfvars` → `-var`/`-var-file` (CLI, last one wins).
+
+**Q7 — B: `list(string)`** A list keeps order and duplicates. A set would collapse the duplicate `"a"` and has no order.
+
+**Q8 — D: `merge()`** `concat()` joins lists, `join()` turns a list into a string, `zipmap()` builds a map from a list of keys and a list of values.
+
+**Q9 — A: When a real dependency exists but no attribute reference expresses it.** References create implicit dependencies. `depends_on` is for hidden ones (e.g. IAM permissions that must exist before a function first runs).
+
+**Q10 — A: Redacts the value in CLI output; the value is still stored in plain text in state.** Sensitive is a display guard, not encryption. Protect state itself (encrypted backend, access control).
+
+**Q11 — D: Rewrites configuration files to the canonical style.** `fmt` changes layout only (indentation, alignment). It never changes meaning and can't fix broken syntax.
+
+**Q12 — B: Saves the plan to a file so that exactly that plan can be applied later.** `terraform apply tfplan` then executes that plan without prompting, and refuses if state changed since (stale plan).
+
+**Q13 — C: A map, or a set of strings.** Lists must be converted with `toset()`. `count` is the one that takes a number.
+
+**Q14 — C: Real infrastructure that differs from what state and configuration describe, usually due to changes made outside Terraform.** Drift = out-of-band change. `plan` detects it during refresh.
+
+**Q15 — B: A `validation` block inside the `variable` block.** Variable validation runs first, on the input itself. Preconditions run per resource; `check` blocks only warn.
+
+**Q16 — A: `count` and `for_each` respectively.** `count` gives an integer index; `for_each` gives `each.key` and `each.value`.
+
+**Q17 — A: The pessimistic constraint operator.** Only the right-most component you wrote may increase.
+
+**Q18 — B: It records the selected provider versions and checksums, and should be committed to version control.** The lock file covers providers only, not modules and not state. Commit it; never commit `terraform.tfstate`.
+
+**Q19 — D: The plan succeeded and there are changes to apply.** With `-detailed-exitcode`: 0 = no changes, 1 = error, 2 = changes present. Without the flag, a successful plan exits 0 whether or not there are changes.
+
+**Q20 — D: `terraform plan -out=tfplan`, review it, then `terraform apply tfplan`.** Applying the saved plan guarantees the reviewed actions are the ones executed.
+
+**Q21 — A: With a pinned version constraint, e.g. `version = "~> 5.0"`.** Pinning avoids surprise breaking changes, the same reasoning as for providers.
+
+**Q22 — B: `module.network.vpc_id`** Child outputs are read as `module.<NAME>.<OUTPUT>`.
+
+**Q23 — A: Evaluating expressions and functions interactively, without changing anything.** A safe scratchpad that reads config and state.
+
+**Q24 — C: Referencing `aws_vpc.main.id` inside an `aws_subnet` resource.** Any reference creates a graph edge automatically. `depends_on` is an explicit dependency.
+
+**Q25 — C: Makes any plan that would destroy or replace the resource fail with an error.** It blocks both an explicit destroy and a forced replacement. Deleting the resource block removes the protection with it.
+
+**Q26 — B: Converts a Terraform value into a JSON-formatted string.** Common for IAM policies written as HCL objects. `jsondecode()` goes the other way.
+
+**Q27 — D: A list keeps order and allows duplicates; a set is unordered with unique elements.** This is why `for_each` needs a set (or map): each element must be a stable unique key.
+
+**Q28 — A: `terraform.tfvars`, `terraform.tfvars.json`, and any `*.auto.tfvars` / `*.auto.tfvars.json`.** A file like `prod.tfvars` is ignored unless passed with `-var-file`.
+
+**Q29 — B: Asserting something about the data that was read, failing the run if it is false.** Postconditions check results (they can use `self`). They exist on resources and data sources; outputs support preconditions.
+
+**Q30 — C: `terraform show tfplan`** `terraform show` renders state or a saved plan (`-json` for machines). `state show` shows one resource address.
+
+**Q31 — D: Fetch it from a secrets manager such as Vault, or pass it as a sensitive variable from a secure store, never from committed files.** Keep secrets out of version control. Remember the value still lands in state unless you use ephemeral values or write-only arguments, so protect state too.
+
+**Q32 — C: As an exception mechanism for recovery situations, not routine use.** Targeting skips part of the graph, so state and config can drift from what a full plan would do.
+
+**Q33 — C: A `resource` is created, updated and destroyed by Terraform; a `data` source is only read.** Own it (resource) vs look it up (data).
+
+**Q34 — B: Declare both providers (in `required_providers`, plus provider blocks as needed) and use each provider's resource types.** Any number of providers can be used side by side, with cross-provider references.
+
+**Q35 — B: Destroys only the targeted resource and anything that depends on it.** Same mechanics as a normal destroy, narrowed to one address. Still an exception tool.
+
+**Q36 — D: The configuration in the working directory where you run Terraform commands.** Every configuration has a root module; modules it calls are child modules.
+
+**Q37 — D: An existing state file.** State is not a module source. Valid sources include local paths, registries, Git, HTTP URLs, S3 and GCS.
+
+**Q38 — B: Only through arguments passed explicitly in the `module` block.** No variables cross the boundary implicitly: inputs go in, outputs come out.
+
+**Q39 — C: To avoid unexpected behaviour changes from a new upstream release.** A new major version can rename resources and trigger destroys. Upgrade deliberately and read the plan.
+
+**Q40 — A: State is a local file locked only on that machine, so it is unsuitable for a team.** The local backend uses an OS file lock on one machine. Nothing protects teammates on other machines, and the file is a single point of failure. Migrate with `init -migrate-state`.
+
+**Q41 — A: `terraform init` (it offers to migrate state; or use `-migrate-state` / `-reconfigure`).** Backend changes always need re-initialization.
+
+**Q42 — A: Updates state to match real infrastructure without changing any infrastructure.** It is the recommended replacement for the deprecated `terraform refresh`.
+
+**Q43 — B: `terraform state mv`** The config equivalent is a `moved` block, which is reviewable in a plan.
+
+**Q44 — B: Terraform stops tracking the instance; the real instance keeps running.** The object becomes unmanaged. If the resource block remains, the next plan proposes creating a duplicate.
+
+**Q45 — D: `use_lockfile = true`, which uses S3 conditional writes to create a lock file.** S3-native locking writes a `.tflock` object only if it doesn't already exist. Bucket versioning is strongly recommended for state recovery.
+
+**Q46 — A: Adds the existing object to state only; you must write matching configuration yourself.** The resource block must already exist. Always run plan afterwards.
+
+**Q47 — D: An `import` block plus `terraform plan -generate-config-out=FILE`.** Config-driven import (1.5+) is also reviewable in the plan before it happens.
+
+**Q48 — C: Enables the most verbose logging level.** Levels from least to most verbose: ERROR, WARN, INFO, DEBUG, TRACE.
+
+**Q49 — A: Writes the log output to a file; `TF_LOG` must also be set.** It changes the destination only, not the verbosity.
+
+**Q50 — C: One configuration's state plus its variables, settings and run history.** Not the same as a CLI workspace, which is only an alternate state for one working directory.
+
+---
+
+## Mock Exam 05
+
+| Q | Answer | Domain | Q | Answer | Domain |
+|---|---|---|---|---|---|
+| 1 | B | D8 | 24 | B | D3 |
+| 2 | C | D8 | 25 | A | D3 |
+| 3 | A | D8 | 26 | C | D4 |
+| 4 | C | D8 | 27 | C | D4 |
+| 5 | A | D8 | 28 | B | D3 |
+| 6 | C | D8 | 29 | B | D4 |
+| 7 | D | D8 | 30 | D | D6 |
+| 8 | D | D7 | 31 | C | D8 |
+| 9 | A | D5 | 32 | C | D6 |
+| 10 | D | D6 | 33 | C | D4 |
+| 11 | B | D6 | 34 | C | D4 |
+| 12 | A | D8 | 35 | A | D4 |
+| 13 | C | D1 | 36 | B | D4 |
+| 14 | A | D1 | 37 | B | D2 |
+| 15 | A | D1 | 38 | D | D6 |
+| 16 | A | D1 | 39 | B | D6 |
+| 17 | D | D2 | 40 | B | D1 |
+| 18 | B | D2 | 41 | D | D8 |
+| 19 | C | D2 | 42 | A | D8 |
+| 20 | D | D3 | 43 | B | D8 |
+| 21 | D | D3 | 44 | D | D8 |
+| 22 | A | D3 | 45 | A | D3 |
+| 23 | D | D3 | 46 | B | D5 |
+
+Domain counts: D1 5 · D2 4 · D3 8 · D4 7 · D5 2 · D6 6 · D7 1 · D8 13 = 46.
+Answer spread: A 12 · B 12 · C 11 · D 11.
+
+### Explanations
+
+**Q1 — B: When infrastructure is in a private network that HCP Terraform's shared workers cannot reach.** Agents are self-hosted runners inside your network; HCP Terraform still orchestrates and stores state.
+
+**Q2 — C: Policy as code evaluated after the plan, which can block non-compliant runs before apply.** Enforcement levels: advisory (warn), soft-mandatory (block unless overridden), hard-mandatory (block, no override).
+
+**Q3 — A: The CLI-driven workflow: local `terraform plan/apply` commands run in HCP Terraform.** Authenticate with `terraform login`, then `init` connects the working directory to the workspace.
+
+**Q4 — C: Security: each run gets short-lived credentials via OIDC instead of static long-lived keys.** A leaked short-lived credential expires quickly; a static key is a standing risk.
+
+**Q5 — A: A container that groups related workspaces for organization and shared access/variable sets.** Hierarchy: organization → project → workspace → runs.
+
+**Q6 — C: A speculative plan, shown on the pull request, that cannot be applied.** Merging to the tracked branch triggers a real run (apply after confirmation, or auto-apply if enabled).
+
+**Q7 — D: Remote runs plan/apply on HCP Terraform workers; local runs them on your machine and uses HCP Terraform only for state.** Remote is the default execution mode.
+
+**Q8 — D: The current state in human-readable form.** Pass a plan file (`terraform show tfplan`) to display a saved plan; add `-json` for machine-readable output.
+
+**Q9 — A: A child module's variables are set only by arguments in the `module` block and are not visible elsewhere.** There are no global variables in Terraform.
+
+**Q10 — D: State can contain sensitive attribute values in plain text.** Use a remote backend with encryption and access control; ignore `*.tfstate` in Git.
+
+**Q11 — B: Shows all attributes recorded in state for that resource.** Read-only, but it can display sensitive values.
+
+**Q12 — A: Sharing internally written modules (and providers) securely across an organization.** Private registry addresses include a hostname, e.g. `app.terraform.io/acme/vpc/aws`.
+
+**Q13 — C: Declarative code defines the desired end state and the tool determines the steps.** That's why Terraform can be idempotent and detect drift.
+
+**Q14 — A: Applying the same configuration repeatedly reaches the same end state; with nothing to change, apply does nothing.** Run `apply` twice: the second reports "No changes".
+
+**Q15 — A: Replacing components with new ones instead of modifying them in place.** Pets vs cattle: replace cow #47, don't nurse it.
+
+**Q16 — A: The same write/plan/apply workflow manages many platforms through provider plugins.** The workflow is portable; resource types are provider-specific.
+
+**Q17 — D: The providers required by the configuration (and its modules) and those recorded in state.** Useful for finding which module requires which provider.
+
+**Q18 — B: Defining several configurations of the same provider, e.g. two AWS regions.** Select it on a resource with `provider = aws.<alias>`.
+
+**Q19 — C: Registry providers, by who maintains them.** Official = HashiCorp; Partner = the technology vendor, verified by HashiCorp; Community = individuals.
+
+**Q20 — D: Selects the newest provider (and module) versions allowed by your constraints, updating the lock file.** Without `-upgrade`, `init` keeps the versions recorded in the lock file.
+
+**Q21 — D: Exits non-zero if any file needs formatting, without rewriting files.** Ideal CI gate; add `-recursive` for subdirectories.
+
+**Q22 — A: Copies the given module into an empty working directory and initializes it.** A shortcut for starting from an example configuration. Rarely used.
+
+**Q23 — D: 10** Change it with `-parallelism=N`, e.g. to avoid API rate limits.
+
+**Q24 — B: `-parallelism=N`** Invented-flag distractors are common on the exam.
+
+**Q25 — A: Forces that resource to be destroyed and recreated; it replaces the deprecated `terraform taint`.** Unlike `taint`, the replacement is shown in the plan before anything happens.
+
+**Q26 — C: A failed `check` assertion produces a warning and the run continues; pre/postcondition failures are errors.** `check` blocks (1.5+) are for continuous validation, e.g. health checks.
+
+**Q27 — C: Tells Terraform to ignore differences in `tags` when planning updates.** Used when something outside Terraform legitimately manages that attribute.
+
+**Q28 — B: Producing the dependency graph in DOT format for visualization.** Render with Graphviz: `terraform graph | dot -Tpng > graph.png`.
+
+**Q29 — B: `depends_on`** Valid: `type`, `default`, `description`, `validation`, `sensitive`, `nullable`, `ephemeral`. `depends_on` belongs on resources, data sources, modules and outputs.
+
+**Q30 — D: Reading the current CLI workspace name inside the configuration.** e.g. `instance_type = terraform.workspace == "prod" ? "m5.large" : "t3.micro"`.
+
+**Q31 — C: A CLI workspace is an alternate state for the same working directory; an HCP Terraform workspace has its own configuration source, state, variables, permissions and run history.** Same word, different things. Decide from context which one a question means.
+
+**Q32 — C: The apply uses a separate, initially empty state for the `dev` workspace.** On the local backend the state is at `terraform.tfstate.d/dev/terraform.tfstate`.
+
+**Q33 — C: A tuple has a fixed length with its own type per position; a list holds any number of elements of one type.** Similarly, an `object` has a fixed set of named attributes while a `map` has any keys with one value type.
+
+**Q34 — C: Disallows `null` as the value (if `null` is passed, the default is used instead).** `nullable` defaults to `true`.
+
+**Q35 — A: `can()`** `can()` is common in `validation` conditions. `try()` returns the first argument that doesn't error.
+
+**Q36 — B: Rendering a template file with supplied variables.** e.g. `templatefile("${path.module}/user_data.tftpl", { port = 8080 })`.
+
+**Q37 — B: The `terraform` binary that parses configuration, builds the graph and manages state, relying on separate provider plugins to call platform APIs.** Core talks to providers over RPC; providers talk to the APIs.
+
+**Q38 — D: A `moved` block with `from = aws_instance.web` and `to = aws_instance.app`.** `terraform state mv` is the CLI alternative; the `moved` block is reviewable in the plan.
+
+**Q39 — B: Delete the resource block and add a `removed` block with `lifecycle { destroy = false }`.** `removed` (1.7+) is the config equivalent of `terraform state rm`.
+
+**Q40 — B: Ansible** Terraform provisions infrastructure; Ansible configures what runs on it. They are often combined.
+
+**Q41 — D: Obtains an API token for HCP Terraform and stores it in the CLI credentials file.** The token is saved in `~/.terraform.d/credentials.tfrc.json`. It is not a cloud provider credential.
+
+**Q42 — A: A plan-only run that previews changes and cannot be applied, e.g. on a pull request.** `terraform plan` with a `cloud` block also produces a speculative plan.
+
+**Q43 — B: They can be applied to many workspaces, projects or a whole organization.** Good for shared credentials. Workspace-specific variables override ordinary variable-set values.
+
+**Q44 — D: It estimates the monthly cost change of supported resources on major clouds such as AWS, Azure and GCP, after plan and before apply.** Run stages: plan → cost estimation → policy check → apply.
+
+**Q45 — A: Prints all root module outputs from state in JSON format.** Use `-raw NAME` for a single value without quotes in scripts.
+
+**Q46 — B: The module block passes it: `providers = { aws = aws.east }`.** Default (un-aliased) provider configurations ARE inherited automatically; aliased ones must be passed explicitly. (The original notes said no providers are inherited, which is wrong.)

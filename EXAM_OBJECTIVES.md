@@ -1,30 +1,34 @@
 # Exam Objectives — Target Version and Coverage Map
 
-> **Read this first.** This file states exactly which exam this course targets, what is
-> assumed, and where uncertainty exists. Nothing here has been checked against a live
-> HashiCorp source during course creation (the course is deliberately offline).
+> **Read this first.** This file states which exam the material targets, what is known,
+> and where uncertainty remains. It merges the exam snapshots from both original resources.
+> When the merge was done (Nov 2026), HashiCorp's site could not be reached from the
+> authoring environment, so **check format details against your booking confirmation**.
 
 ---
 
-## 1. Assumed exam version
+## 1. Exam snapshot
 
-| Item | Assumption | Confidence |
+| Item | Value | Source / confidence |
 |---|---|---|
-| Exam | **HashiCorp Certified: Terraform Associate (004)** | ✅ **Confirmed by candidate booking (2026-10-25)** |
-| Previous version | Terraform Associate (003), which, to my knowledge, was retired around January 2026 when 004 launched | Medium |
-| Terraform product version the exam is written against | Terraform **1.12** (my recollection of the 004 exam page) | Medium |
-| Delivery | Online proctored, multiple choice / multiple select / true-false style | High for 003, Medium for 004 |
-| Number of questions | Approximately **57** (003 figure; 004 is assumed similar) | Medium |
-| Time limit | **60 minutes** | Medium–High |
-| Credential validity | 2 years | Medium |
+| Exam | **HashiCorp Certified: Terraform Associate (004)** | ✅ Confirmed by your booking (2026-10-25) |
+| Previous version | 003, retired when 004 launched (around January 2026) | Medium |
+| Terraform version the exam targets | **1.12** | Both resources agree; the 15-day notes say verified on HashiCorp's page (Aug 2026) |
+| Objective list (8 domains, 34 sub-objectives, 1a–8d) | Section 2 below | **High**: identical in both resources, and the 15-day notes checked it against HashiCorp's exam content list (Aug 2026) |
+| Duration | **60 minutes** | High (both agree) |
+| Number of questions | Roughly **57–60** | Medium (the resources say ~57 and ~60) |
+| Question formats | Multiple choice, multiple select, true/false | Medium–High. No hands-on/terminal tasks |
+| Delivery | Online, remotely proctored (webcam, microphone, photo ID) | High |
+| Price | **$70.50 USD + tax** | Medium (from the 15-day notes) — check your booking |
+| Credential validity | **2 years** | Medium–High |
+| Passing score | Commonly quoted as ~70%. Treat as unconfirmed | Low: aim for ≥ 85% on mocks instead |
+| Prerequisites | None formal | High |
 
-### ✅ Exam code confirmed
-Your booking says **004** (confirmed 2026-10-25). The course targets 004 only; 003
-differences in section 4 are kept just for context. The other uncertainties below still apply.
+The material targets 004 only; 003 differences in section 4 are kept for context.
 
-### Uncertainties I am explicitly flagging
-1. **Exact objective wording and numbering for 004.** The list in section 2 is my best
-   reconstruction. Treat the *topics* as reliable and the *numbering* as approximate.
+### Remaining uncertainties
+1. **Exact objective wording.** Topics and numbering in section 2 agree across both original
+   resources; minor wording differences from HashiCorp's page are possible.
 2. **Question count / passing score.** HashiCorp does not publish a fixed passing
    percentage. Never trust any "you need X%" claim — including from me.
 3. **Question formats.** Older versions reportedly included occasional fill-in-the-blank
@@ -39,7 +43,7 @@ differences in section 4 are kept just for context. The other uncertainties belo
 
 ---
 
-## 2. Objective map (004, reconstructed)
+## 2. Objective map (004)
 
 Legend for "Where taught": `D#` = daily lesson, `L##` = lab.
 

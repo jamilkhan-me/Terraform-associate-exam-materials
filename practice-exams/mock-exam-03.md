@@ -450,4 +450,5 @@ What is **Terraform Enterprise**?
 - D. A provider for enterprise software.
 
 ---
-**Stop.** Submit answers in chat.
+**Stop.** Mark your answers with [answer-keys.md](answer-keys.md), record the score and per-domain results in
+[SCORECARD.md](../SCORECARD.md), and log every miss in [mistakes/error-log.md](../mistakes/error-log.md).

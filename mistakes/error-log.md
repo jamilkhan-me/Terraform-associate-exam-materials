@@ -1,7 +1,7 @@
 # Error Log
 
-Every mistake from quizzes, labs, and mocks is recorded here by the instructor. Open items are
-re-tested at the start of each session until answered correctly.
+Record every mistake from quizzes, labs and mocks here, including lucky guesses. Re-test open
+items at the start of each session until you answer them correctly.
 
 Classification: **K** knowledge gap · **C** confused similar concepts · **M** misread question · **G** guess
 
@@ -21,3 +21,9 @@ Classification: **K** knowledge gap · **C** confused similar concepts · **M** 
 
 ## Entries
 _None yet — the diagnostic test will populate this log._
+
+### Known traps from the original notes (pre-loaded; these were wrong in the 15-day notes)
+- `~> 2.3` allows 2.4.0 (it's `>= 2.3, < 3.0`). Only `~> 2.3.0` stops at 2.3.x.
+- Child modules **do** inherit default (un-aliased) providers; only aliased ones need `providers = {}`.
+- The local backend **does** lock, but only on its own machine.
+- Plan exit code 2 ("changes present") only happens with `-detailed-exitcode`.
